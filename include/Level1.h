@@ -1,0 +1,31 @@
+#ifndef LEVEL1_H
+#define LEVEL1_H
+
+#include "GameState.h"
+#include "Game.h"
+#include "Shader.h"
+#include "Model.h"
+#include "TileMap.h"
+#include "Texture.h"
+#include "Player.h"
+
+
+class Level1 : public GameState
+{
+    public:
+        Level1();
+        void Init();
+        void Update(Game *game);
+        void Render();
+        virtual ~Level1();
+        static Texture texture;
+    protected:
+    private:
+        Shader shader;
+        GLuint projUniform;
+        Model background;
+        TileMap tileMap;
+        Player player;
+};
+
+#endif // LEVEL1_H
