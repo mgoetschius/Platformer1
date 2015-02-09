@@ -10,7 +10,7 @@ Player::Player()
 void Player::Setup(const Shader &shader)
 {
     xPos = 128;
-    yPos = 7*64;
+    yPos = 7*Game::tileSize;
     xSpeed = 5;
     ySpeed = 0;
     gravity = .1;
@@ -18,7 +18,7 @@ void Player::Setup(const Shader &shader)
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
     translation = glm::vec3(xPos, yPos, 0.0f);
     rotation = glm::vec3(0.0, 0.0, 1.0);
-    scale = glm::vec3(64.0,64.0,1.0);
+    scale = glm::vec3(Game::tileSize,Game::tileSize,1.0);
     rotationAmount = 0;
 
     transMatrix = glm::translate(transMatrix, translation);
@@ -33,43 +33,37 @@ void Player::Setup(const Shader &shader)
 
 void Player::update(TileMap &tileMap)
 {
-    int playerTileX = (int) (xPos / 64);
-    int playerTileY = (int) (yPos / 64);
+    //int playerTileX = (int) (xPos / Game::tileSize);
+    //int playerTileY = (int) (yPos / Game::tileSize);
     //std::cout << playerTileX << "," << playerTileY << std::endl;
     if(Input::getKey(Input::KEY_D))
-        if(!tileMap.GetTileCollision((int) ((xPos+64+xSpeed) / 64), (int) (yPos / 64))
-           && !tileMap.GetTileCollision((int) ((xPos+64+xSpeed) / 64), (int) ((yPos + 63) / 64)))
+        if(!tileMap.GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) (yPos / Game::tileSize))
+           && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos + Game::tileSize) / Game::tileSize)))
             xPos += xSpeed;
     if(Input::getKey(Input::KEY_A))
-        if(!tileMap.GetTileCollision((int) ((xPos-xSpeed) / 64), (yPos / 64))
-           && !tileMap.GetTileCollision((int) ((xPos-xSpeed) / 64), ((yPos+63) / 64)))
+        if(!tileMap.GetTileCollision((int) ((xPos-xSpeed) / Game::tileSize), (yPos / Game::tileSize))
+           && !tileMap.GetTileCollision((int) ((xPos-xSpeed) / Game::tileSize), ((yPos+Game::tileSize) / Game::tileSize)))
             xPos -= xSpeed;
     if(Input::getKey(Input::KEY_W) && jumping == false)
     {
         ySpeed = -7;
         jumping = true;
-        if(!tileMap.GetTileCollision((int) ((xPos) / 64), (int) ((yPos-ySpeed) / 64))
-           && !tileMap.GetTileCollision((int) ((xPos+63) / 64), (int) ((yPos-ySpeed) / 64)))
+        if(!tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos-ySpeed) / Game::tileSize))
+           && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos-ySpeed) / Game::tileSize)))
             yPos += ySpeed;
     }
 
-    if(Input::getKey(Input::KEY_S))
-        if(!tileMap.GetTileCollision((int) ((xPos) / 64), (int) ((yPos+62+ySpeed) / 64))
-           && !tileMap.GetTileCollision((int) ((xPos+63) / 64), (int) ((yPos+62+ySpeed) / 64)))
-            yPos += ySpeed;
-
     /// Gravity
 
-
-        if(tileMap.GetTileCollision((int) ((xPos) / 64), (int) ((yPos+ySpeed + gravity) / 64))
-                || tileMap.GetTileCollision((int) ((xPos+63) / 64), (int) ((yPos+ySpeed + gravity) / 64))
+        if(tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
+                || tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
                 )
         {
             jumping = true;
             ySpeed = 0;
         }
-        if(!tileMap.GetTileCollision((int) ((xPos) / 64), (int) ((yPos+64+ySpeed + gravity) / 64))
-           && !tileMap.GetTileCollision((int) ((xPos+63) / 64), (int) ((yPos+64+ySpeed + gravity) / 64))
+        if(!tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
+           && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
            )
         {
             jumping = true;

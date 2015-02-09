@@ -4,6 +4,9 @@
 #include <vector>
 #include "Shader.h"
 #include "Model.h"
+#include "Texture.h"
+#include "Vertex.h"
+#include "Mesh.h"
 
 
 
@@ -15,16 +18,29 @@ class TileMap
         void Update();
         void Render();
         virtual ~TileMap();
-        int GetMapHeight() {return tiles.size();};
-        int GetMapWidth() {return tiles[0].size();};
+        int GetMapHeight() {return tileIndices.size();};
+        int GetMapWidth() {return tileIndices[0].size();};
         bool GetTileCollision(int x, int y);
     protected:
     private:
+        Texture texture;
+        Mesh mesh;
+        glm::vec3 translation;
+        glm::vec3 rotation;
+        glm::vec3 scale;
+        glm::mat4 transMatrix;
+        float rotationAmount;
+        GLuint transUniform;
         void LoadFromFile(std::string filename);
+        void SetupTexCoords();
+        void BuildVertices();
         std::vector<std::string> Split(std::string& s, char c, bool removeEmpties);
 
         std::vector<std::vector<std::string>> tileIndices;
         std::vector<std::vector<Model>> tiles;
+        std::vector<vector<float>> texCoords;
+        std::vector<Vertex> vertices;
+        std::vector<GLuint> indices;
 };
 
 #endif // TILEMAP_H
