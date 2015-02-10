@@ -22,7 +22,7 @@ bool Input::keys[350];  //GLFW uses up to 348;
 int main()
 {
     glfwInit();
-    GLFWwindow* window = glfwCreateWindow(Game::windowWidth, Game::windowHeight, "Fishing Rodeo", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(Game::windowWidth, Game::windowHeight, "Platformer1", NULL, NULL);
     glfwMakeContextCurrent(window);
     // Set the required callback functions  other available
     glfwSetKeyCallback(window, key_callback);

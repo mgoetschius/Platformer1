@@ -24,18 +24,34 @@ class Player
     protected:
     private:
         float xPos, yPos, xSpeed, ySpeed;
+        int direction;
         float gravity;
         bool jumping = false;
+        double delta, curTime, lastTime;
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo, ibo;
         std::vector<GLuint> indices;
         Shader shader;
         Texture texture;
+        std::vector<std::vector<float>> texCoords;
+        int texCoordsIndex;
         TextureChangeMesh mesh;
         glm::vec3 translation, rotation, scale;
         glm::mat4 transMatrix;
         float rotationAmount;
         void SetupMesh();
+        void Move(TileMap&, int dx);
+        struct Animation
+        {
+          int firstFrame;
+          int lastFrame;
+          int curFrame;
+          double time;
+          double delay;
+        };
+        Animation rightAnim;
+        Animation leftAnim;
+        void UpdateAnimation(Animation &anim, double dt);
 };
 
 #endif // PLAYER_H

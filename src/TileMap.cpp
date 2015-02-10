@@ -14,7 +14,7 @@ TileMap::TileMap()
 void TileMap::Setup(Shader &shader)
 {
     texture.Setup("res/textures/level1.png");
-    SetupTexCoords();
+    texCoords = texture.SetupTexCoords(Game::tileSize);
     LoadFromFile(std::string("res/maps/map.txt"));
     BuildVertices();
     mesh.Setup(vertices, indices, texture);
@@ -120,45 +120,7 @@ void TileMap::BuildVertices()
     }
 }
 
-void TileMap::SetupTexCoords()
-{
-    /******************************************************
-    /// this function builds a nested vector textCoords that holds the 8 texture Coords for each
-    /// square in a grid on the loaded texture for this TileMap.  Coords are stored in order u,v,u,v,u,v,u,v
-    /// starting with the top left vertex and moving around the square clockwise.
-    /// access the coords using
-    /// texCoords[y][x]
-    /// where y is the texture number--top left square on the texture is 0, should correspond to tilemap text file
-    /// x is the u/v index.  ie. top left u -- x = 0
-    ********************************************************/
 
-    std::vector<float> row;
-    float coords[8];
-    int totalAcross = texture.GetWidth() / Game::tileSize;
-    int totalDown = texture.GetHeight() / Game::tileSize;
-
-    for(int y = 0; y < totalDown; y++)
-    {
-        for(int x = 0; x < totalAcross; x++)
-        {
-            coords[0] = x * 1.0 / totalAcross;
-            coords[1] = y * 1.0 / totalDown;
-            coords[2] = coords[0] + 1.0 / totalAcross;
-            coords[3] = coords[1];
-            coords[4] = coords[2];
-            coords[5] = coords[1] + 1.0 / totalDown;
-            coords[6] = coords[0];
-            coords[7] = coords[5];
-
-            row.clear();
-            for(int i = 0; i < 8; i++)
-            {
-                row.push_back(coords[i]);
-            }
-            texCoords.push_back(row);
-        }
-    }
-}
 
 TileMap::~TileMap()
 {
