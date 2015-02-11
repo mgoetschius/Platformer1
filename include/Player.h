@@ -35,7 +35,6 @@ class Player
         Texture texture;
         std::vector<std::vector<float>> texCoords;
         int texCoordsIndex;
-        TextureChangeMesh mesh;
         glm::vec3 translation, rotation, scale;
         glm::mat4 transMatrix;
         float rotationAmount;

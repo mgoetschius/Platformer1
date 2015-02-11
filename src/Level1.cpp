@@ -14,21 +14,20 @@ void Level1::Init()
     Level1::texture.Setup("res/textures/level1.png");
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
 
-    background.Setup(shader, string("blueblock"));
-    //background.SetScale(glm::vec3(.1,.13,.1));
-    background.SetScale(glm::vec3(64,64,1));
-    background.SetTranslation(glm::vec3(0,0,0));
-
     tileMap.Setup(shader);
     tileMap.Update();
 
+    background.Setup(shader, string("res/textures/background.png"));
+    background.SetScale(glm::vec3(1.0f, tileMap.GetMapHeight() * Game::tileSize, 1.0f));
+    std::cout << tileMap.GetMapHeight() << std::endl;
     player.Setup(shader);
 }
 
 void Level1::Update(Game *game)
 {
-    //background.update();
+    background.update();
     player.update(tileMap);
+    tileMap.Update();
 }
 
 void Level1::Render()
@@ -40,9 +39,14 @@ void Level1::Render()
     offsetX = max(offsetX, (Game::windowWidth - mapWidth));
 
     int offsetY = Game::windowHeight - tileMap.GetMapHeight()*Game::tileSize;
+    float temp = (float)(Game::windowWidth - mapWidth) / (mapWidth - background.GetWidth());
+    int backgroundX = offsetX/temp;
+    background.SetTranslation(glm::vec3((float)backgroundX, 0.0f, 0.0f));
+    background.update();
+    background.render();
+
     glm::mat4 projMatrix = glm::ortho(0.0f-offsetX, (float)Game::windowWidth-offsetX, (float)Game::windowHeight-offsetY, 0.0f-offsetY, -1.0f, 1.0f);
     glUniformMatrix4fv(projUniform, 1, GL_FALSE, glm::value_ptr(projMatrix));
-    //background.render();
     tileMap.Render();
     player.render();
 }

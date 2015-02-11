@@ -118,7 +118,6 @@ void Player::update(TileMap &tileMap)
     transMatrix = glm::translate(transMatrix, translation);
     transMatrix = glm::rotate(transMatrix, glm::radians(0.0f),  rotation);
     transMatrix = glm::scale(transMatrix, scale);
-    transMatrix = transMatrix;
 
     /// change player texCoords
 

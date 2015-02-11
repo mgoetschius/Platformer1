@@ -29,17 +29,28 @@ void TileMap::Setup(Shader &shader)
     transMatrix = glm::rotate(transMatrix, glm::radians(0.0f),  rotation);
     transMatrix = glm::scale(transMatrix, scale);
 
+    Enemy e;
+    e.Setup(shader);
+    enemies.push_back(e);
 }
 
 void TileMap::Update()
 {
-    mesh.update();
+    //mesh.update();
+    for(int i = 0; i < enemies.size(); i++)
+    {
+        enemies[i].update(this);
+    }
 }
 
 void TileMap::Render()
 {
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     mesh.render();
+    for(int i = 0; i < enemies.size(); i++)
+    {
+        enemies[i].render();
+    }
 }
 
 bool TileMap::GetTileCollision(int x, int y)

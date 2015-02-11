@@ -8,6 +8,7 @@
 #include "TileMap.h"
 #include "Texture.h"
 #include "Player.h"
+#include "Background.h"
 
 
 class Level1 : public GameState
@@ -23,7 +24,7 @@ class Level1 : public GameState
     private:
         Shader shader;
         GLuint projUniform;
-        Model background;
+        Background background;
         TileMap tileMap;
         Player player;
 };

@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Vertex.h"
 #include "Mesh.h"
+#include "Enemy.h"
 
 
 
@@ -41,6 +42,7 @@ class TileMap
         std::vector<vector<float>> texCoords;
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
+        std::vector<Enemy> enemies;
 };
 
 #endif // TILEMAP_H
