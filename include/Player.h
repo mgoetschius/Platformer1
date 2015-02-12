@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "TextureChangeMesh.h"
 #include "Shader.h"
+#include "Animation.h"
 #include "TileMap.h"
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
@@ -16,7 +17,7 @@ class Player
     public:
         Player();
         void Setup(const Shader&);
-        void update(TileMap&);
+        void update(TileMap&, double dt);
         void render();
         float GetXPos() {return xPos;};
         float GetYPos() {return yPos;};
@@ -27,7 +28,6 @@ class Player
         int direction;
         float gravity;
         bool jumping = false;
-        double delta, curTime, lastTime;
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo, ibo;
         std::vector<GLuint> indices;
@@ -40,14 +40,6 @@ class Player
         float rotationAmount;
         void SetupMesh();
         void Move(TileMap&, int dx);
-        struct Animation
-        {
-          int firstFrame;
-          int lastFrame;
-          int curFrame;
-          double time;
-          double delay;
-        };
         Animation rightAnim;
         Animation leftAnim;
         void UpdateAnimation(Animation &anim, double dt);

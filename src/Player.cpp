@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "Game.h"
 #include "Input.h"
-#include <GL/glfw3.h>
 
 Player::Player()
 {
@@ -17,16 +16,8 @@ void Player::Setup(const Shader &shader)
     gravity = .2;
     jumping = true;
     texCoordsIndex = 1;
-    rightAnim.firstFrame = 8;
-    rightAnim.lastFrame = 11;
-    rightAnim.curFrame = 8;
-    rightAnim.time = 0;
-    rightAnim.delay = .8;
-    leftAnim.firstFrame = 4;
-    leftAnim.lastFrame = 7;
-    leftAnim.curFrame = 8;
-    leftAnim.time = 0;
-    leftAnim.delay = .8;
+    rightAnim.Setup(8, 11, 8, 0, .8);
+    leftAnim.Setup(4, 7, 4);
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
     translation = glm::vec3(xPos, yPos, 0.0f);
     rotation = glm::vec3(0.0, 0.0, 1.0);
@@ -38,30 +29,24 @@ void Player::Setup(const Shader &shader)
     transMatrix = glm::scale(transMatrix, scale);
 
     SetupMesh();
-
-    lastTime = glfwGetTime();
-
 }
 
-void Player::update(TileMap &tileMap)
+void Player::update(TileMap &tileMap, double dt)
 {
-    curTime = glfwGetTime();
-    delta = curTime - lastTime;
-    lastTime = curTime;
     if(Input::getKey(Input::KEY_D))
     {
         direction = 1;
         Move(tileMap, direction);
-        UpdateAnimation(rightAnim, delta);
-        texCoordsIndex = rightAnim.curFrame;
+        rightAnim.Update(dt);
+        texCoordsIndex = rightAnim.GetCurFrame();
     }
 
     else if(Input::getKey(Input::KEY_A))
     {
         direction = -1;
         Move(tileMap, direction);
-        UpdateAnimation(leftAnim, delta);
-        texCoordsIndex = leftAnim.curFrame;
+        leftAnim.Update(dt);
+        texCoordsIndex = leftAnim.GetCurFrame();
     }
     else
     {
@@ -112,6 +97,19 @@ void Player::update(TileMap &tileMap)
             texCoordsIndex = 0;
     }
 
+    /// check collision with enemy
+
+    std::vector<Enemy> *enemies = tileMap.GetEnemies();
+    for(std::vector<Enemy>::iterator i = enemies->begin(); i != enemies->end(); i++ )
+    {
+        if(xPos + Game::tileSize > (*i).GetXPos()
+           && (*i).GetXPos() > xPos
+           && yPos + Game::tileSize > (*i).GetYPos()
+           && (*i).GetYPos() + Game::tileSize > yPos)
+        {
+            std::cout << "hit\n";
+        }
+    }
 
     translation = glm::vec3(xPos, yPos, 0.0f);
     transMatrix = glm::mat4();
@@ -157,21 +155,7 @@ void Player::render()
     glDepthMask(GL_TRUE);
 }
 
-void Player::UpdateAnimation(Animation &anim, double dt)
-{
 
-    anim.time += .1;
-
-    if(anim.time > anim.delay)
-    {
-        anim.curFrame++;
-        anim.time = 0;
-    }
-    if(anim.curFrame > anim.lastFrame)
-    {
-        anim.curFrame = anim.firstFrame;
-    }
-}
 
 void Player::Move(TileMap &tileMap, int dx)
 {
@@ -251,7 +235,7 @@ void Player::SetupMesh()
 
     glGenBuffers(1, &tbo);
     glBindBuffer(GL_ARRAY_BUFFER, tbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tex), tex, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tex), tex, GL_STREAM_DRAW);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 

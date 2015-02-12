@@ -27,6 +27,7 @@ class Level1 : public GameState
         Background background;
         TileMap tileMap;
         Player player;
+        double delta, curTime, lastTime;
 };
 
 #endif // LEVEL1_H

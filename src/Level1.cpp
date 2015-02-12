@@ -1,5 +1,6 @@
 #include "Level1.h"
 #include <algorithm>
+#include <GL/glfw3.h>
 
 Texture Level1::texture;
 
@@ -15,7 +16,6 @@ void Level1::Init()
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
 
     tileMap.Setup(shader);
-    tileMap.Update();
 
     background.Setup(shader, string("res/textures/background.png"));
     background.SetScale(glm::vec3(1.0f, tileMap.GetMapHeight() * Game::tileSize, 1.0f));
@@ -25,9 +25,12 @@ void Level1::Init()
 
 void Level1::Update(Game *game)
 {
+    curTime = glfwGetTime();
+    delta = curTime - lastTime;
+    lastTime = curTime;
     background.update();
-    player.update(tileMap);
-    tileMap.Update();
+    player.update(tileMap, delta);
+    tileMap.Update(delta);
 }
 
 void Level1::Render()

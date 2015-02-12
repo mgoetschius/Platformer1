@@ -2,6 +2,7 @@
 #define ENEMY_H
 #include "Texture.h"
 #include "Shader.h"
+#include "Animation.h"
 #include <vector>
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
@@ -15,8 +16,10 @@ class Enemy
     public:
         Enemy();
         void Setup(Shader &shader);
-        void update(TileMap *tileMap);
+        void update(TileMap *tileMap, double dt);
         void render();
+        float GetXPos() {return xPos;};
+        float GetYPos() {return yPos;};
         virtual ~Enemy();
     protected:
     private:
@@ -31,6 +34,8 @@ class Enemy
         float rotationAmount;
         Texture texture;
         std::vector<std::vector<float>> texCoords;
+        Animation rightAnim, leftAnim;
+        int texCoordsIndex;
 };
 
 #endif // ENEMY_H

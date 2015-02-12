@@ -15,6 +15,10 @@ void Enemy::Setup(Shader &shader)
     ySpeed = 0;
     gravity = .2f;
 
+    texCoordsIndex = 0;
+    rightAnim.Setup(2, 3, 2);
+    leftAnim.Setup(0, 1, 0);
+
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
     translation = glm::vec3(xPos, yPos, 0.0f);
     rotation = glm::vec3(0.0, 0.0, 1.0);
@@ -26,12 +30,15 @@ void Enemy::Setup(Shader &shader)
     transMatrix = glm::scale(transMatrix, scale);
 }
 
-void Enemy::update(TileMap *tileMap)
+void Enemy::update(TileMap *tileMap, double dt)
 {
     xPos += xSpeed;
 
     if (xSpeed < 0)
     {
+        leftAnim.Update(dt);
+        texCoordsIndex = leftAnim.GetCurFrame();
+
        if(xPos + xSpeed < 0
           || tileMap->GetTileCollision((int) ((xPos+xSpeed) / Game::tileSize), (int) ((yPos+64) / Game::tileSize)))
         {
@@ -40,11 +47,17 @@ void Enemy::update(TileMap *tileMap)
         }
     }
 
-    else if (xPos + xSpeed > tileMap->GetMapWidth()*Game::tileSize
-             ||tileMap->GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos+64) / Game::tileSize)))
+    else
     {
-        xSpeed *= -1;
+        rightAnim.Update(dt);
+        texCoordsIndex = rightAnim.GetCurFrame();
+
+        if (xPos + xSpeed > tileMap->GetMapWidth()*Game::tileSize
+             ||tileMap->GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos+64) / Game::tileSize)))
+        {
+            xSpeed *= -1;
             direction = 1;
+        }
     }
 
     /// Gravity
@@ -70,6 +83,27 @@ void Enemy::update(TileMap *tileMap)
             ySpeed = 0;
         }
 
+    /// update animation
+
+    GLfloat tex[12];
+    tex[0] = texCoords[texCoordsIndex][0];
+    tex[1] = texCoords[texCoordsIndex][1];
+    tex[2] = texCoords[texCoordsIndex][2];
+    tex[3] = texCoords[texCoordsIndex][3];
+    tex[4] = texCoords[texCoordsIndex][4];
+    tex[5] = texCoords[texCoordsIndex][5];
+
+    tex[6] = texCoords[texCoordsIndex][0];
+    tex[7] = texCoords[texCoordsIndex][1];
+    tex[8] = texCoords[texCoordsIndex][4];
+    tex[9] = texCoords[texCoordsIndex][5];
+    tex[10] = texCoords[texCoordsIndex][6];
+    tex[11] = texCoords[texCoordsIndex][7];
+
+    glBindBuffer(GL_ARRAY_BUFFER, tbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     translation = glm::vec3(xPos, yPos, 0.0f);
     transMatrix = glm::mat4();
     transMatrix = glm::translate(transMatrix, translation);
@@ -94,7 +128,7 @@ void Enemy::render()
 
 void Enemy::SetupMesh()
 {
-    texture.Setup("res/textures/orangie.png");
+    texture.Setup("res/textures/orangieanim.png");
     texCoords = texture.SetupTexCoords(Game::tileSize);
 
     GLfloat vertCoords[] =
@@ -134,7 +168,7 @@ void Enemy::SetupMesh()
 
     glGenBuffers(1, &tbo);
     glBindBuffer(GL_ARRAY_BUFFER, tbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tex), tex, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tex), tex, GL_STREAM_DRAW);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 

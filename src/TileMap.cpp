@@ -34,12 +34,11 @@ void TileMap::Setup(Shader &shader)
     enemies.push_back(e);
 }
 
-void TileMap::Update()
+void TileMap::Update(double dt)
 {
-    //mesh.update();
     for(int i = 0; i < enemies.size(); i++)
     {
-        enemies[i].update(this);
+        enemies[i].update(this, dt);
     }
 }
 
