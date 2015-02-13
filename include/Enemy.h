@@ -15,11 +15,15 @@ class Enemy
 {
     public:
         Enemy();
-        void Setup(Shader &shader);
+        void Setup(Shader &shader, float x = 650, float y = 400);
         void update(TileMap *tileMap, double dt);
         void render();
         float GetXPos() {return xPos;};
         float GetYPos() {return yPos;};
+        void SetIsDead(bool b) {isDead = b;};
+        bool GetIsDead() {return isDead;};
+        void SetRemove(bool b) {remove = b;};
+        bool GetRemove() {return remove;};
         virtual ~Enemy();
     protected:
     private:
@@ -27,6 +31,7 @@ class Enemy
         float xPos, yPos, xSpeed, ySpeed, gravity;
         int direction;
         bool jumping;
+        bool isDead, remove;
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo;
         glm::vec3 translation, rotation, scale;

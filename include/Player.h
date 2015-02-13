@@ -11,16 +11,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+class Game;
 
 class Player
 {
     public:
         Player();
         void Setup(const Shader&);
-        void update(TileMap&, double dt);
+        void update(Game *game, TileMap&, double dt);
         void render();
         float GetXPos() {return xPos;};
         float GetYPos() {return yPos;};
+        bool GetIsDead() {return isDead;};
         virtual ~Player();
     protected:
     private:
@@ -28,6 +30,8 @@ class Player
         int direction;
         float gravity;
         bool jumping = false;
+        bool onLadder = false;
+        bool isDead = false;
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo, ibo;
         std::vector<GLuint> indices;

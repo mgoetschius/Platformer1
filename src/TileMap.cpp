@@ -29,16 +29,32 @@ void TileMap::Setup(Shader &shader)
     transMatrix = glm::rotate(transMatrix, glm::radians(0.0f),  rotation);
     transMatrix = glm::scale(transMatrix, scale);
 
-    Enemy e;
-    e.Setup(shader);
-    enemies.push_back(e);
+    for(int i = 0; i < 1; i++)
+    {
+        Enemy e;
+        e.Setup(shader, i * 300 + 1250, 450);
+        enemies.push_back(e);
+    }
 }
 
 void TileMap::Update(double dt)
 {
     for(int i = 0; i < enemies.size(); i++)
     {
-        enemies[i].update(this, dt);
+            enemies[i].update(this, dt);
+            if(enemies[i].GetYPos() > tileIndices.size() * Game::tileSize + Game::tileSize)
+                enemies[i].SetRemove(true);
+    }
+    for(std::vector<Enemy>::iterator i = enemies.begin(); i != enemies.end(); )
+    {
+        if((*i).GetRemove())
+        {
+            i = enemies.erase(i);
+        }
+        else
+        {
+            i++;
+        }
     }
 }
 
@@ -59,10 +75,24 @@ bool TileMap::GetTileCollision(int x, int y)
     {
         return true;
     }
-    if (tileIndices[y][x] == "0")
+    if (tileIndices[y][x] == "0"
+        || tileIndices[y][x] == "3")
         return false;
     else
         return true;
+}
+
+bool TileMap::GetLadderCollision(int x, int y)
+{
+    if(x < 0 || x >= tileIndices[0].size() ||
+       y < 0 || y >= tileIndices.size())
+    {
+        return false;
+    }
+    if (tileIndices[y][x] == "3")
+        return true;
+    else
+        return false;
 }
 
 void TileMap::LoadFromFile(std::string filename)

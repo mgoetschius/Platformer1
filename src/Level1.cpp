@@ -25,12 +25,19 @@ void Level1::Init()
 
 void Level1::Update(Game *game)
 {
-    curTime = glfwGetTime();
-    delta = curTime - lastTime;
-    lastTime = curTime;
-    background.update();
-    player.update(tileMap, delta);
-    tileMap.Update(delta);
+    if(!player.GetIsDead())
+    {
+        curTime = glfwGetTime();
+        delta = curTime - lastTime;
+        lastTime = curTime;
+        background.update();
+        player.update(game, tileMap, delta);
+        tileMap.Update(delta);
+    }
+    else
+    {
+        game->ChangeState(0);
+    }
 }
 
 void Level1::Render()

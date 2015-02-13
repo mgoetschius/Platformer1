@@ -22,6 +22,7 @@ class TileMap
         int GetMapHeight() {return tileIndices.size();};
         int GetMapWidth() {return tileIndices[0].size();};
         bool GetTileCollision(int x, int y);
+        bool GetLadderCollision(int x, int y);
         std::vector<Enemy>* GetEnemies() {return &enemies;};
     protected:
     private:

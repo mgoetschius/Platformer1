@@ -30,6 +30,8 @@ void Game::Render()
 void Game::ChangeState(int state)
 {
     delete gameState;
+    gameState = new Level1();
+    gameState->Init();
 }
 
 Game::~Game()

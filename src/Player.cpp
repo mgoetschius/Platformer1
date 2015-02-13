@@ -31,7 +31,7 @@ void Player::Setup(const Shader &shader)
     SetupMesh();
 }
 
-void Player::update(TileMap &tileMap, double dt)
+void Player::update(Game *game, TileMap &tileMap, double dt)
 {
     if(Input::getKey(Input::KEY_D))
     {
@@ -63,17 +63,30 @@ void Player::update(TileMap &tileMap, double dt)
            && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos-ySpeed) / Game::tileSize)))
             yPos += ySpeed;
     }
+    if(Input::getKey(Input::KEY_S))
+    {
+        if(tileMap.GetLadderCollision(xPos/Game::tileSize, yPos / Game::tileSize))
+        {
+            //onLadder = true;
+            yPos--;
+        }
+    }
 
     /// Gravity
 
-        if(tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
-                || tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
+        if(onLadder)
+        {
+            jumping = false;
+            ySpeed = 0;
+        }
+        else if(tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
+           || tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
                 )
         {
             jumping = true;
             ySpeed = 0;
         }
-        if(!tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
+        else if(!tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
            && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
            )
         {
@@ -81,7 +94,6 @@ void Player::update(TileMap &tileMap, double dt)
             ySpeed += gravity;
             yPos += ySpeed;
         }
-
 
         else
         {
@@ -103,11 +115,23 @@ void Player::update(TileMap &tileMap, double dt)
     for(std::vector<Enemy>::iterator i = enemies->begin(); i != enemies->end(); i++ )
     {
         if(xPos + Game::tileSize > (*i).GetXPos()
-           && (*i).GetXPos() > xPos
+           && (*i).GetXPos() + Game::tileSize > xPos
            && yPos + Game::tileSize > (*i).GetYPos()
-           && (*i).GetYPos() + Game::tileSize > yPos)
+           && (*i).GetYPos() + Game::tileSize > yPos
+           && !(*i).GetIsDead())
         {
-            std::cout << "hit\n";
+            if(yPos + Game::tileSize/2 < (*i).GetYPos())
+            {
+                std::cout << "kill\n";
+                ySpeed = -5;
+                (*i).SetIsDead(true);
+
+            }
+            else
+            {
+                std::cout << "dead\n";
+                isDead = true;
+            }
         }
     }
 
