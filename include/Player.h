@@ -44,6 +44,7 @@ class Player
         float rotationAmount;
         void SetupMesh();
         void Move(TileMap&, int dx);
+        void Move(TileMap tileMap, glm::vec2 top, glm::vec2 bottom, int direction);
         Animation rightAnim;
         Animation leftAnim;
         void UpdateAnimation(Animation &anim, double dt);
