@@ -16,7 +16,7 @@ void TileMap::Setup(Shader &shader)
     texture.Setup("res/textures/level1.png");
     texCoords = texture.SetupTexCoords(Game::tileSize);
     LoadFromFile(std::string("res/maps/map.txt"));
-    BuildVertices();
+    BuildVertices(shader);
     mesh.Setup(vertices, indices, texture);
 
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
@@ -31,9 +31,9 @@ void TileMap::Setup(Shader &shader)
 
     for(int i = 0; i < 1; i++)
     {
-        Enemy e;
-        e.Setup(shader, i * 300 + 600, 450);
-        enemies.push_back(e);
+        //Enemy e;
+        //e.Setup(shader, "res/textures/orangieanim.png", i * 300 + 600, 450);
+        enemies.push_back(new OrangeEnemy(shader, "res/textures/orangieanim.png", i * 300 + 600, 450));
     }
 }
 
@@ -41,14 +41,15 @@ void TileMap::Update(double dt)
 {
     for(int i = 0; i < enemies.size(); i++)
     {
-            enemies[i].update(this, dt);
-            if(enemies[i].GetYPos() > tileIndices.size() * Game::tileSize + Game::tileSize)
-                enemies[i].SetRemove(true);
+            enemies[i]->Update(this, dt);
+            if(enemies[i]->GetYPos() > tileIndices.size() * Game::tileSize + Game::tileSize)
+                enemies[i]->SetRemove(true);
     }
-    for(std::vector<Enemy>::iterator i = enemies.begin(); i != enemies.end(); )
+    for(std::vector<Enemy*>::iterator i = enemies.begin(); i != enemies.end(); )
     {
-        if((*i).GetRemove())
+        if((*i)->GetRemove())
         {
+            delete *i;
             i = enemies.erase(i);
         }
         else
@@ -64,7 +65,7 @@ void TileMap::Render()
     mesh.render();
     for(int i = 0; i < enemies.size(); i++)
     {
-        enemies[i].render();
+        enemies[i]->render();
     }
 }
 
@@ -76,7 +77,9 @@ bool TileMap::GetTileCollision(int x, int y)
         return true;
     }
     if (tileIndices[y][x] == "0"
-        || tileIndices[y][x] == "3")
+        || tileIndices[y][x] == "3"
+        || tileIndices[y][x] == "A"
+        || tileIndices[y][x] == "B")
         return false;
     else
         return true;
@@ -131,14 +134,15 @@ std::vector<std::string> TileMap::Split(std::string& s, char c, bool removeEmpti
     return vstr;
 }
 
-void TileMap::BuildVertices()
+void TileMap::BuildVertices(Shader &shader)
 {
     int indicesPlacer = 0;
     for(unsigned int y = 0; y < tileIndices.size(); y++)
     {
         for(unsigned int x = 0; x < tileIndices[0].size(); x++)
         {
-            if(tileIndices[y][x] != "0")
+            if(tileIndices[y][x] != "0"
+               && tileIndices[y][x] != "A")
             {
                 Vertex v1(glm::vec3(x * Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][0], texCoords[atoi(tileIndices[y][x].c_str())][1]));
                 Vertex v2(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][2], texCoords[atoi(tileIndices[y][x].c_str())][3]));
@@ -156,6 +160,16 @@ void TileMap::BuildVertices()
                 indices.push_back(++indicesPlacer);
                 indicesPlacer++;
             }
+            if(tileIndices[y][x] == "A")
+            {
+                enemies.push_back(new OrangeEnemy(shader, "res/textures/orangieanim.png", x * Game::tileSize, y * Game::tileSize));
+            }
+
+            if(tileIndices[y][x] == "B")
+            {
+                enemies.push_back(new PurpleEnemy(shader, "res/textures/purpleie.png", x * Game::tileSize, y * Game::tileSize));
+            }
+
         }
     }
 }
@@ -164,5 +178,11 @@ void TileMap::BuildVertices()
 
 TileMap::~TileMap()
 {
-    //dtor
+    /*
+    for(std::vector<Enemy*>::iterator it = enemies.begin(); it != enemies.end(); it++)
+    {
+        delete (*it);
+    }
+    enemies.clear();
+    */
 }

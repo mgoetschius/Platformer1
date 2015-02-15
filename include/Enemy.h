@@ -15,8 +15,8 @@ class Enemy
 {
     public:
         Enemy();
-        void Setup(Shader &shader, float x = 650, float y = 400);
-        void update(TileMap *tileMap, double dt);
+        Enemy(Shader &shader, const char *filename, float x = 650, float y = 400);
+        virtual void Update(TileMap *tileMap, double dt);
         void render();
         float GetXPos() {return xPos;};
         float GetYPos() {return yPos;};
@@ -26,8 +26,7 @@ class Enemy
         bool GetRemove() {return remove;};
         virtual ~Enemy();
     protected:
-    private:
-        void SetupMesh();
+        void SetupMesh(const char *filename);
         float xPos, yPos, xSpeed, ySpeed, gravity;
         int direction;
         bool jumping;
@@ -41,6 +40,8 @@ class Enemy
         std::vector<std::vector<float>> texCoords;
         Animation rightAnim, leftAnim;
         int texCoordsIndex;
+    private:
+
 };
 
 #endif // ENEMY_H

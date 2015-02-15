@@ -19,7 +19,6 @@ void Level1::Init()
 
     background.Setup(shader, string("res/textures/background.png"));
     background.SetScale(glm::vec3(1.0f, tileMap.GetMapHeight() * Game::tileSize, 1.0f));
-    std::cout << tileMap.GetMapHeight() << std::endl;
     player.Setup(shader);
 }
 

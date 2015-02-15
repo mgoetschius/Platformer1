@@ -8,6 +8,8 @@
 #include "Vertex.h"
 #include "Mesh.h"
 #include "Enemy.h"
+#include "OrangeEnemy.h"
+#include "PurpleEnemy.h"
 
 
 
@@ -23,7 +25,7 @@ class TileMap
         int GetMapWidth() {return tileIndices[0].size();};
         bool GetTileCollision(int x, int y);
         bool GetLadderCollision(int x, int y);
-        std::vector<Enemy>* GetEnemies() {return &enemies;};
+        std::vector<Enemy*>* GetEnemies() {return &enemies;};
     protected:
     private:
         Texture texture;
@@ -36,7 +38,7 @@ class TileMap
         GLuint transUniform;
         void LoadFromFile(std::string filename);
         void SetupTexCoords();
-        void BuildVertices();
+        void BuildVertices(Shader &shader);
         std::vector<std::string> Split(std::string& s, char c, bool removeEmpties);
 
         std::vector<std::vector<std::string>> tileIndices;
@@ -44,7 +46,7 @@ class TileMap
         std::vector<vector<float>> texCoords;
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
-        std::vector<Enemy> enemies;
+        std::vector<Enemy *> enemies;
 };
 
 #endif // TILEMAP_H

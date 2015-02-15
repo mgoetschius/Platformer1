@@ -132,20 +132,20 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
 
     /// check collision with enemy
 
-    std::vector<Enemy> *enemies = tileMap.GetEnemies();
-    for(std::vector<Enemy>::iterator i = enemies->begin(); i != enemies->end(); i++ )
+    std::vector<Enemy*> *enemies = tileMap.GetEnemies();
+    for(std::vector<Enemy*>::iterator i = enemies->begin(); i != enemies->end(); i++ )
     {
-        if(xPos + Game::tileSize > (*i).GetXPos()
-           && (*i).GetXPos() + Game::tileSize > xPos
-           && yPos + Game::tileSize > (*i).GetYPos()
-           && (*i).GetYPos() + Game::tileSize > yPos
-           && !(*i).GetIsDead())
+        if(xPos + Game::tileSize > (*i)->GetXPos()
+           && (*i)->GetXPos() + Game::tileSize > xPos
+           && yPos + Game::tileSize > (*i)->GetYPos()
+           && (*i)->GetYPos() + Game::tileSize > yPos
+           && !(*i)->GetIsDead())
         {
-            if(yPos + Game::tileSize/2 < (*i).GetYPos())
+            if(yPos + Game::tileSize/2 < (*i)->GetYPos())
             {
                 std::cout << "kill\n";
                 ySpeed = -5;
-                (*i).SetIsDead(true);
+                (*i)->SetIsDead(true);
 
             }
             else
