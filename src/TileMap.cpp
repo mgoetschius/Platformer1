@@ -32,7 +32,7 @@ void TileMap::Setup(Shader &shader)
     for(int i = 0; i < 1; i++)
     {
         Enemy e;
-        e.Setup(shader, i * 300 + 1250, 450);
+        e.Setup(shader, i * 300 + 600, 450);
         enemies.push_back(e);
     }
 }

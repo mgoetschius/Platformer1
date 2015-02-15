@@ -35,15 +35,15 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
 {
     //std::cout << "x: " << (int)(xPos) / 64 << "y: " << (int)(yPos+64)/64 << std::endl;
 
-    glm::vec2 topLeft(xPos+3, (yPos+3));
-    glm::vec2 topRight((xPos+Game::tileSize-3), (yPos+3));
-    glm::vec2 bottomLeft(xPos+3, (yPos+Game::tileSize-3));
-    glm::vec2 bottomRight((xPos+Game::tileSize-3), (yPos+Game::tileSize-3));
+    glm::vec2 topLeft(xPos+1, (yPos+1));
+    glm::vec2 topRight((xPos+Game::tileSize-1), (yPos+1));
+    glm::vec2 bottomLeft(xPos+1, (yPos+Game::tileSize-1));
+    glm::vec2 bottomRight((xPos+Game::tileSize-1), (yPos+Game::tileSize-1));
     if(Input::getKey(Input::KEY_D))
     {
         direction = 1;
-        glm::vec2 tr((xPos+xSpeed+64)/64, yPos/Game::tileSize);
-        glm::vec2 br((xPos+xSpeed+64)/64,  (yPos+Game::tileSize)/Game::tileSize);
+        glm::vec2 tr((topRight.x+xSpeed)/64, topRight.y/Game::tileSize);
+        glm::vec2 br((bottomRight.x+xSpeed)/64,  (bottomRight.y)/Game::tileSize);
         Move(tileMap, tr, br, direction);
         rightAnim.Update(dt);
         texCoordsIndex = rightAnim.GetCurFrame();
@@ -52,8 +52,8 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
     else if(Input::getKey(Input::KEY_A))
     {
         direction = -1;
-        glm::vec2 tl((xPos-xSpeed)/64, yPos/Game::tileSize);
-        glm::vec2 bl((xPos-xSpeed)/64,  (yPos+Game::tileSize)/Game::tileSize);
+        glm::vec2 tl((topLeft.x-xSpeed)/64, topLeft.y/Game::tileSize);
+        glm::vec2 bl((topLeft.x-xSpeed)/64,  (bottomLeft.y)/Game::tileSize);
         Move(tileMap, tl, bl, direction);
         leftAnim.Update(dt);
         texCoordsIndex = leftAnim.GetCurFrame();
@@ -70,19 +70,16 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
         ySpeed = -7.5;
         jumping = true;
         onLadder = false;
-        if(!tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos-ySpeed) / Game::tileSize))
-           && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos-ySpeed) / Game::tileSize)))
-            yPos += ySpeed;
     }
     if(Input::getKey(Input::KEY_S))
     {
-        if(tileMap.GetLadderCollision((int)(xPos+Game::tileSize/2)/Game::tileSize, (yPos+64) / Game::tileSize))
+        if(tileMap.GetLadderCollision((int)(xPos+Game::tileSize/2)/Game::tileSize, (yPos) / Game::tileSize))
         {
             onLadder = true;
-            if(!tileMap.GetTileCollision((int)(xPos)/Game::tileSize, (int) ((yPos-3) / Game::tileSize))
-               && !tileMap.GetTileCollision((int)(xPos+64)/Game::tileSize, (int) ((yPos-3) / Game::tileSize)))
+            if(!tileMap.GetTileCollision((int)(topRight.x)/Game::tileSize, (int) ((topRight.y) / Game::tileSize))
+               && !tileMap.GetTileCollision((int)(topLeft.x)/Game::tileSize, (int) ((topLeft.y) / Game::tileSize)))
                {
-                    yPos-=2;
+                    yPos-=3;
                }
         }
     }
@@ -103,15 +100,15 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
                 onLadder = false;
             }
         }
-        else if(tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
-           || tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
+        else if(tileMap.GetTileCollision((int) ((topLeft.x) / Game::tileSize), (int) ((topLeft.y+ySpeed + gravity) / Game::tileSize))
+           || tileMap.GetTileCollision((int) ((topRight.x) / Game::tileSize), (int) ((topRight.y+ySpeed + gravity) / Game::tileSize))
                 )
         {
             jumping = true;
             ySpeed = 0;
         }
-        else if(!tileMap.GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
-           && !tileMap.GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
+        else if(!tileMap.GetTileCollision((int) ((bottomLeft.x) / Game::tileSize), (int) ((bottomLeft.y+ySpeed + gravity) / Game::tileSize))
+           && !tileMap.GetTileCollision((int) ((bottomRight.x) / Game::tileSize), (int) ((bottomRight.y+ySpeed + gravity) / Game::tileSize))
            )
         {
             jumping = true;

@@ -43,9 +43,13 @@ void Enemy::update(TileMap *tileMap, double dt)
             leftAnim.Update(dt);
             texCoordsIndex = leftAnim.GetCurFrame();
 
-           if(xPos + xSpeed < 0
-              || (tileMap->GetTileCollision((int) ((xPos+xSpeed) / Game::tileSize), (int) ((yPos+Game::tileSize) / Game::tileSize))
-              && tileMap->GetTileCollision((int) ((xPos+xSpeed) / Game::tileSize), (int) ((yPos) / Game::tileSize))))
+           if(xPos + xSpeed < 0)
+           {
+                xSpeed *= -1;
+                direction = -1;
+           }
+           if(tileMap->GetTileCollision((int) ((xPos+xSpeed) / Game::tileSize), (int) ((yPos-1+Game::tileSize) / Game::tileSize))
+              || tileMap->GetTileCollision((int) ((xPos+xSpeed) / Game::tileSize), (int) ((yPos+1) / Game::tileSize)))
             {
                 xSpeed *= -1;
                 direction = -1;
@@ -57,9 +61,13 @@ void Enemy::update(TileMap *tileMap, double dt)
             rightAnim.Update(dt);
             texCoordsIndex = rightAnim.GetCurFrame();
 
-            if (xPos + xSpeed > tileMap->GetMapWidth()*Game::tileSize
-                || (tileMap->GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos+Game::tileSize) / Game::tileSize))
-                && tileMap->GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos) / Game::tileSize))))
+            if (xPos + xSpeed > tileMap->GetMapWidth()*Game::tileSize)
+            {
+                xSpeed *= -1;
+                direction = 1;
+            }
+            if(tileMap->GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos-1+Game::tileSize) / Game::tileSize))
+               || tileMap->GetTileCollision((int) ((xPos+Game::tileSize+xSpeed) / Game::tileSize), (int) ((yPos+1) / Game::tileSize)))
             {
                 xSpeed *= -1;
                 direction = 1;
