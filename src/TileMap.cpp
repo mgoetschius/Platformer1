@@ -67,6 +67,8 @@ void TileMap::Render()
     {
         enemies[i]->render();
     }
+    key.render();
+    door.render();
 }
 
 bool TileMap::GetTileCollision(int x, int y)
@@ -79,7 +81,9 @@ bool TileMap::GetTileCollision(int x, int y)
     if (tileIndices[y][x] == "0"
         || tileIndices[y][x] == "3"
         || tileIndices[y][x] == "A"
-        || tileIndices[y][x] == "B")
+        || tileIndices[y][x] == "B"
+        || tileIndices[y][x] == "D"
+        || tileIndices[y][x] == "K")
         return false;
     else
         return true;
@@ -142,7 +146,10 @@ void TileMap::BuildVertices(Shader &shader)
         for(unsigned int x = 0; x < tileIndices[0].size(); x++)
         {
             if(tileIndices[y][x] != "0"
-               && tileIndices[y][x] != "A")
+               && tileIndices[y][x] != "A"
+               && tileIndices[y][x] != "B"
+               && tileIndices[y][x] != "D"
+               && tileIndices[y][x] != "K")
             {
                 Vertex v1(glm::vec3(x * Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][0], texCoords[atoi(tileIndices[y][x].c_str())][1]));
                 Vertex v2(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][2], texCoords[atoi(tileIndices[y][x].c_str())][3]));
@@ -169,20 +176,33 @@ void TileMap::BuildVertices(Shader &shader)
             {
                 enemies.push_back(new PurpleEnemy(shader, "res/textures/purpleie.png", x * Game::tileSize, y * Game::tileSize));
             }
+            if(tileIndices[y][x] == "K")
+            {
+                key.Setup(shader, x * Game::tileSize, y * Game::tileSize, Game::tileSize);
+            }
+            if(tileIndices[y][x] == "D")
+            {
+                door.Setup(shader, x * Game::tileSize, y * Game::tileSize, Game::tileSize);
+            }
 
         }
     }
 }
 
-
-
-TileMap::~TileMap()
+void TileMap::CleanUp()
 {
-    /*
+    std::cout << "Cleaning up TileMap\n";
     for(std::vector<Enemy*>::iterator it = enemies.begin(); it != enemies.end(); it++)
     {
         delete (*it);
     }
     enemies.clear();
+}
+
+
+TileMap::~TileMap()
+{
+    /*
+
     */
 }

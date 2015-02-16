@@ -62,5 +62,5 @@ void Level1::Render()
 
 Level1::~Level1()
 {
-    //dtor
+    tileMap.CleanUp();
 }

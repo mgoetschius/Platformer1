@@ -10,7 +10,6 @@
 #include "Player.h"
 #include "Background.h"
 
-
 class Level1 : public GameState
 {
     public:

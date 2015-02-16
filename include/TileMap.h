@@ -10,7 +10,8 @@
 #include "Enemy.h"
 #include "OrangeEnemy.h"
 #include "PurpleEnemy.h"
-
+#include "Key.h"
+#include "Door.h"
 
 
 class TileMap
@@ -20,6 +21,7 @@ class TileMap
         void Setup(Shader &shader);
         void Update(double dt);
         void Render();
+        void CleanUp();
         virtual ~TileMap();
         int GetMapHeight() {return tileIndices.size();};
         int GetMapWidth() {return tileIndices[0].size();};
@@ -47,6 +49,10 @@ class TileMap
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
         std::vector<Enemy *> enemies;
+
+        Key key;
+        Door door;
+
 };
 
 #endif // TILEMAP_H
