@@ -14,7 +14,7 @@ class Level1 : public GameState
 {
     public:
         Level1();
-        void Init();
+        void Init(int levelNum);
         void Update(Game *game);
         void Render();
         virtual ~Level1();
@@ -27,6 +27,7 @@ class Level1 : public GameState
         TileMap tileMap;
         Player player;
         double delta, curTime, lastTime;
+        int level;
 };
 
 #endif // LEVEL1_H

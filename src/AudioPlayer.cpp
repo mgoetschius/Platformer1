@@ -7,7 +7,7 @@ AudioPlayer::AudioPlayer()
     //sound->setRepeat(true);
     //sound->setVolume(.2);
     //sounds[0] = sound;
-    sound2 = audiere::OpenSound(device, "res/audio/drop.wav", false);
+    sound2 = audiere::OpenSound(device, "res/audio/ding.wav", false);
     sound2->setRepeat(false);
     sound2->setVolume(.5);
     sounds[1] = sound2;

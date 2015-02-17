@@ -1,6 +1,8 @@
 #include "Level1.h"
 #include <algorithm>
 #include <GL/glfw3.h>
+#include <string>
+#include <sstream>
 
 Texture Level1::texture;
 
@@ -9,22 +11,44 @@ Level1::Level1()
     //ctor
 }
 
-void Level1::Init()
+void Level1::Init(int levelNum)
 {
+    level = levelNum;
+    stringstream ss;
+    ss << levelNum;
+
+    string s = "res/textures/level" + ss.str() + ".png";
     shader.Setup("res/shaders/vertexshader.vs", "res/shaders/fragmentshader.fs");
-    Level1::texture.Setup("res/textures/level1.png");
+    Level1::texture.Setup(s.c_str());
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
 
-    tileMap.Setup(shader);
+    tileMap.Setup(shader, ss.str());
 
-    background.Setup(shader, string("res/textures/background.png"));
+    s = "res/textures/backgroundlevel" + ss.str() + ".png";
+    background.Setup(shader, s);
     background.SetScale(glm::vec3(1.0f, tileMap.GetMapHeight() * Game::tileSize, 1.0f));
     player.Setup(shader);
 }
 
 void Level1::Update(Game *game)
 {
-    if(!player.GetIsDead())
+    if(player.GetIsDead())
+    {
+        game->ChangeState(level);
+
+    }
+    else if (player.GetLevelOver())
+    {
+        if(level == 1)
+        {
+            game->ChangeState(2);
+        }
+        else
+        {
+            game->ChangeState(1);
+        }
+    }
+    else
     {
         curTime = glfwGetTime();
         delta = curTime - lastTime;
@@ -32,10 +56,6 @@ void Level1::Update(Game *game)
         background.update();
         player.update(game, tileMap, delta);
         tileMap.Update(delta);
-    }
-    else
-    {
-        game->ChangeState(0);
     }
 }
 

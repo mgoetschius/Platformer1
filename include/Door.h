@@ -13,6 +13,7 @@ class Door
     public:
         Door();
         void Setup(Shader &shader, int x, int y, int size);
+        void update();
         void render();
         virtual ~Door();
     protected:

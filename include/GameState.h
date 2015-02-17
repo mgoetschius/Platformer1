@@ -7,7 +7,7 @@ class GameState
 {
     public:
         GameState();
-        virtual void Init() = 0;
+        virtual void Init(int levelNum) = 0;
         virtual void Update(Game *game) = 0;
         virtual void Render() = 0;
         virtual ~GameState();

@@ -18,15 +18,19 @@ class TileMap
 {
     public:
         TileMap();
-        void Setup(Shader &shader);
+        void Setup(Shader &shader, string levelNum);
         void Update(double dt);
         void Render();
         void CleanUp();
         virtual ~TileMap();
         int GetMapHeight() {return tileIndices.size();};
         int GetMapWidth() {return tileIndices[0].size();};
+        void SetHasKey(bool value) {hasKey = value;};
         bool GetTileCollision(int x, int y);
+        bool GetKeyCollision(int x, int y);
+        bool GetDoorCollision(int x, int y);
         bool GetLadderCollision(int x, int y);
+        void UpdateDoor() {door.update();};
         std::vector<Enemy*>* GetEnemies() {return &enemies;};
     protected:
     private:
@@ -51,6 +55,7 @@ class TileMap
         std::vector<Enemy *> enemies;
 
         Key key;
+        bool hasKey = false;
         Door door;
 
 };

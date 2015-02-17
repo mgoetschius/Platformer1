@@ -23,6 +23,28 @@ void Door::Setup(Shader & shader, int x, int y, int size)
     transMatrix = glm::scale(transMatrix, scale);
 }
 
+void Door::update()
+{
+    GLfloat tex[12];
+    tex[0] = texCoords[1][0];
+    tex[1] = texCoords[1][1];
+    tex[2] = texCoords[1][2];
+    tex[3] = texCoords[1][3];
+    tex[4] = texCoords[1][4];
+    tex[5] = texCoords[1][5];
+
+    tex[6] = texCoords[1][0];
+    tex[7] = texCoords[1][1];
+    tex[8] = texCoords[1][4];
+    tex[9] = texCoords[1][5];
+    tex[10] = texCoords[1][6];
+    tex[11] = texCoords[1][7];
+
+    glBindBuffer(GL_ARRAY_BUFFER, tbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void Door::render()
 {
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));

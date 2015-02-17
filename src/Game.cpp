@@ -3,6 +3,7 @@
 int Game::windowWidth = 640;
 int Game::windowHeight = 480;
 const int Game::tileSize = 64;
+AudioPlayer Game::audioPlayer;
 
 Game::Game()
 {
@@ -13,7 +14,7 @@ void Game::Init()
 {
     std::cout << "Initializing Game\n";
     gameState = new Level1();
-    gameState->Init();
+    gameState->Init(1);
 }
 
 void Game::Update()
@@ -31,7 +32,7 @@ void Game::ChangeState(int state)
 {
     delete gameState;
     gameState = new Level1();
-    gameState->Init();
+    gameState->Init(state);
 }
 
 Game::~Game()

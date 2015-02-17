@@ -11,11 +11,13 @@ TileMap::TileMap()
     //ctor
 }
 
-void TileMap::Setup(Shader &shader)
+void TileMap::Setup(Shader &shader, string levelNum)
 {
-    texture.Setup("res/textures/level1.png");
+    string s = "res/textures/level" + levelNum + ".png";
+    texture.Setup(s.c_str());
     texCoords = texture.SetupTexCoords(Game::tileSize);
-    LoadFromFile(std::string("res/maps/map.txt"));
+    s = "res/maps/level" + levelNum + ".txt";
+    LoadFromFile(s);
     BuildVertices(shader);
     mesh.Setup(vertices, indices, texture);
 
@@ -67,7 +69,8 @@ void TileMap::Render()
     {
         enemies[i]->render();
     }
-    key.render();
+    if(!hasKey)
+        key.render();
     door.render();
 }
 
@@ -87,6 +90,31 @@ bool TileMap::GetTileCollision(int x, int y)
         return false;
     else
         return true;
+}
+
+bool TileMap::GetKeyCollision(int x, int y)
+{
+    if(x < 0 || x >= tileIndices[0].size() ||
+       y < 0 || y >= tileIndices.size())
+    {
+        return false;
+    }
+    if (tileIndices[y][x] == "K")
+        return true;
+    else
+        return false;
+}
+bool TileMap::GetDoorCollision(int x, int y)
+{
+    if(x < 0 || x >= tileIndices[0].size() ||
+       y < 0 || y >= tileIndices.size())
+    {
+        return false;
+    }
+    if (tileIndices[y][x] == "D")
+        return true;
+    else
+        return false;
 }
 
 bool TileMap::GetLadderCollision(int x, int y)

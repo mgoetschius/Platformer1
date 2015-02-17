@@ -23,6 +23,7 @@ class Player
         float GetXPos() {return xPos;};
         float GetYPos() {return yPos;};
         bool GetIsDead() {return isDead;};
+        bool GetLevelOver() {return levelOver;};
         virtual ~Player();
     protected:
     private:
@@ -32,6 +33,8 @@ class Player
         bool jumping = false;
         bool onLadder = false;
         bool isDead = false;
+        bool doorIsOpen = false;
+        bool levelOver = false;
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo, ibo;
         std::vector<GLuint> indices;

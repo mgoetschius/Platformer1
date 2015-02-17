@@ -4,6 +4,7 @@
 #include <iostream>
 #include "GameState.h"
 #include "Level1.h"
+#include "AudioPlayer.h"
 
 enum GameStates
 {
@@ -24,6 +25,7 @@ class Game
         virtual ~Game();
         static int windowWidth;
         static int windowHeight;
+        static AudioPlayer audioPlayer;
         const static int tileSize;
     protected:
     private:

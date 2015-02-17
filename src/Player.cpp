@@ -83,10 +83,20 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
                }
         }
     }
-    if(tileMap.GetLadderCollision((int)(xPos/Game::tileSize), (int) ((yPos+Game::tileSize) / Game::tileSize)))
+    if(!doorIsOpen
+       && tileMap.GetKeyCollision((int)((xPos+Game::tileSize/2)/Game::tileSize), (int) ((yPos+Game::tileSize/2) / Game::tileSize)))
         {
-            //std::cout << "ladder collision\n";
+            Game::audioPlayer.play(1);
+            tileMap.SetHasKey(true);
+            tileMap.UpdateDoor();
+            doorIsOpen = true;
         }
+    if(doorIsOpen
+       && tileMap.GetDoorCollision((int)((xPos+Game::tileSize/2)/Game::tileSize), (int) ((yPos+Game::tileSize/2) / Game::tileSize)))
+    {
+        std::cout << "here\n";
+        levelOver = true;
+    }
 
     /// Gravity
 
@@ -155,7 +165,6 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
             }
         }
     }
-
     translation = glm::vec3(xPos, yPos, 0.0f);
     transMatrix = glm::mat4();
     transMatrix = glm::translate(transMatrix, translation);

@@ -5,7 +5,7 @@ GameState::GameState()
     //ctor
 }
 
-void GameState::Init()
+void GameState::Init(int levelNum)
 {
 
 }
