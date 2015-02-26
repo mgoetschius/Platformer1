@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Animation.h"
 #include "TileMap.h"
+#include "Yoyo.h"
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -51,6 +52,7 @@ class Player
         Animation rightAnim;
         Animation leftAnim;
         void UpdateAnimation(Animation &anim, double dt);
+        Yoyo yoyo;
 };
 
 #endif // PLAYER_H

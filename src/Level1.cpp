@@ -3,6 +3,7 @@
 #include <GL/glfw3.h>
 #include <string>
 #include <sstream>
+#include "Input.h"
 
 Texture Level1::texture;
 

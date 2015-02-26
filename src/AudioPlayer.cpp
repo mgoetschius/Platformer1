@@ -3,14 +3,16 @@
 AudioPlayer::AudioPlayer()
 {
     device = audiere::OpenDevice();
-    //sound = audiere::OpenSound(device, "res/audio/1.wav", false);
-    //sound->setRepeat(true);
-    //sound->setVolume(.2);
-    //sounds[0] = sound;
-    sound2 = audiere::OpenSound(device, "res/audio/ding.wav", false);
-    sound2->setRepeat(false);
-    sound2->setVolume(.5);
-    sounds[1] = sound2;
+    AddSound("res/audio/drop.wav", false, false);
+    AddSound("res/audio/ding.wav", false, false);
+}
+
+void AudioPlayer::AddSound(const char* filename, bool streaming, bool repeating)
+{
+    sound = audiere::OpenSound(device, filename, streaming);
+    sound->setRepeat(repeating);
+    sound->setVolume(0.5);
+    sounds.push_back(sound);
 }
 
 void AudioPlayer::play(int index)

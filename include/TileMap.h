@@ -48,6 +48,7 @@ class TileMap
         std::vector<std::string> Split(std::string& s, char c, bool removeEmpties);
 
         std::vector<std::vector<std::string>> tileIndices;
+        std::vector<std::vector<int>>tileInts;
         std::vector<std::vector<Model>> tiles;
         std::vector<vector<float>> texCoords;
         std::vector<Vertex> vertices;

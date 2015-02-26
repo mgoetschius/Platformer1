@@ -15,6 +15,7 @@ void Player::Setup(const Shader &shader)
     ySpeed = 0;
     gravity = .2;
     jumping = true;
+    direction = 1;
     texCoordsIndex = 1;
     rightAnim.Setup(8, 11, 8, 0, .8);
     leftAnim.Setup(4, 7, 4);
@@ -29,6 +30,8 @@ void Player::Setup(const Shader &shader)
     transMatrix = glm::scale(transMatrix, scale);
 
     SetupMesh();
+
+    yoyo.Setup(shader, xPos, yPos);
 }
 
 void Player::update(Game *game, TileMap &tileMap, double dt)
@@ -65,13 +68,13 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
         else
             texCoordsIndex = 0;
     }
-    if(Input::getKey(Input::KEY_W) && jumping == false)
+    if(Input::getKey(Input::KEY_J) && jumping == false)
     {
         ySpeed = -7.5;
         jumping = true;
         onLadder = false;
     }
-    if(Input::getKey(Input::KEY_S))
+    if(Input::getKey(Input::KEY_W))
     {
         if(tileMap.GetLadderCollision((int)(xPos+Game::tileSize/2)/Game::tileSize, (yPos) / Game::tileSize))
         {
@@ -153,7 +156,8 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
         {
             if(yPos + Game::tileSize/2 < (*i)->GetYPos())
             {
-                std::cout << "kill\n";
+                //std::cout << "kill\n";
+                Game::audioPlayer.play(0);
                 ySpeed = -5;
                 (*i)->SetIsDead(true);
 
@@ -192,6 +196,8 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    yoyo.Update(xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction);
+
 }
 
 void Player::render()
@@ -207,6 +213,7 @@ void Player::render()
     glBindVertexArray(0);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
+    yoyo.render();
 }
 
 void Player::Move(TileMap tileMap, glm::vec2 top, glm::vec2 bottom, int direction)

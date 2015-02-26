@@ -30,13 +30,6 @@ void TileMap::Setup(Shader &shader, string levelNum)
     transMatrix = glm::translate(transMatrix, translation);
     transMatrix = glm::rotate(transMatrix, glm::radians(0.0f),  rotation);
     transMatrix = glm::scale(transMatrix, scale);
-
-    for(int i = 0; i < 1; i++)
-    {
-        //Enemy e;
-        //e.Setup(shader, "res/textures/orangieanim.png", i * 300 + 600, 450);
-        enemies.push_back(new OrangeEnemy(shader, "res/textures/orangieanim.png", i * 300 + 600, 450));
-    }
 }
 
 void TileMap::Update(double dt)
@@ -81,12 +74,8 @@ bool TileMap::GetTileCollision(int x, int y)
     {
         return true;
     }
-    if (tileIndices[y][x] == "0"
-        || tileIndices[y][x] == "3"
-        || tileIndices[y][x] == "A"
-        || tileIndices[y][x] == "B"
-        || tileIndices[y][x] == "D"
-        || tileIndices[y][x] == "K")
+    if (tileInts[y][x] == 0
+        || tileInts[y][x] > 36)
         return false;
     else
         return true;
@@ -99,7 +88,7 @@ bool TileMap::GetKeyCollision(int x, int y)
     {
         return false;
     }
-    if (tileIndices[y][x] == "K")
+    if (tileInts[y][x] == 63)
         return true;
     else
         return false;
@@ -111,7 +100,7 @@ bool TileMap::GetDoorCollision(int x, int y)
     {
         return false;
     }
-    if (tileIndices[y][x] == "D")
+    if (tileInts[y][x] == 62)
         return true;
     else
         return false;
@@ -124,7 +113,7 @@ bool TileMap::GetLadderCollision(int x, int y)
     {
         return false;
     }
-    if (tileIndices[y][x] == "3")
+    if (tileInts[y][x] == 64)
         return true;
     else
         return false;
@@ -140,7 +129,22 @@ void TileMap::LoadFromFile(std::string filename)
     std::string line;
     while(std::getline(in, line))
     {
-        tileIndices.push_back(Split(line, ',', false));
+        tileIndices.push_back(Split(line, ',', true));
+    }
+    /// convert tileIndicies to tileInts
+    std::vector<int> row;
+    for(int y = 0; y < tileIndices.size(); y++)
+    {
+        row.clear();
+        for(int x = 0; x < tileIndices[0].size(); x++)
+        {
+            int res;
+            stringstream convert(tileIndices[y][x]);
+            if ( !(convert >> res) )
+                res = 0;
+            row.push_back(res);
+        }
+        tileInts.push_back(row);
     }
 }
 
@@ -173,16 +177,14 @@ void TileMap::BuildVertices(Shader &shader)
     {
         for(unsigned int x = 0; x < tileIndices[0].size(); x++)
         {
-            if(tileIndices[y][x] != "0"
-               && tileIndices[y][x] != "A"
-               && tileIndices[y][x] != "B"
-               && tileIndices[y][x] != "D"
-               && tileIndices[y][x] != "K")
+            if((tileInts[y][x] > 0
+               && tileInts[y][x] <= 36)
+               || tileInts[y][x] == 64)
             {
-                Vertex v1(glm::vec3(x * Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][0], texCoords[atoi(tileIndices[y][x].c_str())][1]));
-                Vertex v2(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][2], texCoords[atoi(tileIndices[y][x].c_str())][3]));
-                Vertex v3(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize + Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][4], texCoords[atoi(tileIndices[y][x].c_str())][5]));
-                Vertex v4(glm::vec3(x * Game::tileSize, y * Game::tileSize + Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str())][6], texCoords[atoi(tileIndices[y][x].c_str())][7]));
+                Vertex v1(glm::vec3(x * Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][0], texCoords[atoi(tileIndices[y][x].c_str()) - 1][1]));
+                Vertex v2(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][2], texCoords[atoi(tileIndices[y][x].c_str()) - 1][3]));
+                Vertex v3(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize + Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][4], texCoords[atoi(tileIndices[y][x].c_str()) - 1][5]));
+                Vertex v4(glm::vec3(x * Game::tileSize, y * Game::tileSize + Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][6], texCoords[atoi(tileIndices[y][x].c_str()) - 1][7]));
                 vertices.push_back(v1);
                 vertices.push_back(v2);
                 vertices.push_back(v3);
@@ -195,20 +197,20 @@ void TileMap::BuildVertices(Shader &shader)
                 indices.push_back(++indicesPlacer);
                 indicesPlacer++;
             }
-            if(tileIndices[y][x] == "A")
+            if(tileInts[y][x] == 57)
             {
                 enemies.push_back(new OrangeEnemy(shader, "res/textures/orangieanim.png", x * Game::tileSize, y * Game::tileSize));
             }
 
-            if(tileIndices[y][x] == "B")
+            if(tileInts[y][x] == 58)
             {
                 enemies.push_back(new PurpleEnemy(shader, "res/textures/purpleie.png", x * Game::tileSize, y * Game::tileSize));
             }
-            if(tileIndices[y][x] == "K")
+            if(tileInts[y][x] == 63)
             {
                 key.Setup(shader, x * Game::tileSize, y * Game::tileSize, Game::tileSize);
             }
-            if(tileIndices[y][x] == "D")
+            if(tileInts[y][x] == 62)
             {
                 door.Setup(shader, x * Game::tileSize, y * Game::tileSize, Game::tileSize);
             }

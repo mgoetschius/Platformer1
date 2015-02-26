@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <vector>
 
 #include "audiere.h"
 
@@ -13,12 +14,12 @@ class AudioPlayer
         AudioPlayer();
         void play(int index);
         virtual ~AudioPlayer();
+        void AddSound(const char* filename, bool streaming, bool repeating);
     protected:
     private:
         audiere::AudioDevicePtr device;
         audiere::OutputStreamPtr sound;
-        audiere::OutputStreamPtr sound2;
-        audiere::OutputStreamPtr sounds[2];
+        std::vector<audiere::OutputStreamPtr> sounds;
 };
 
 #endif // AUDIOPLAYER_H

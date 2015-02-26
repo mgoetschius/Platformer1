@@ -1,7 +1,7 @@
 #include "Game.h"
 
-int Game::windowWidth = 640;
-int Game::windowHeight = 480;
+int Game::windowWidth = 720;
+int Game::windowHeight = 680;
 const int Game::tileSize = 64;
 AudioPlayer Game::audioPlayer;
 
