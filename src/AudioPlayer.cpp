@@ -3,8 +3,8 @@
 AudioPlayer::AudioPlayer()
 {
     device = audiere::OpenDevice();
-    AddSound("res/audio/drop.wav", false, false);
-    AddSound("res/audio/ding.wav", false, false);
+    AddSound("./res/audio/drop.wav", false, false);
+    AddSound("./res/audio/ding.wav", false, false);
 }
 
 void AudioPlayer::AddSound(const char* filename, bool streaming, bool repeating)

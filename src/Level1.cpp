@@ -18,14 +18,14 @@ void Level1::Init(int levelNum)
     stringstream ss;
     ss << levelNum;
 
-    string s = "res/textures/level" + ss.str() + ".png";
-    shader.Setup("res/shaders/vertexshader.vs", "res/shaders/fragmentshader.fs");
+    string s = "./res/textures/level" + ss.str() + ".png";
+    shader.Setup("./res/shaders/vertexshader.vs", "./res/shaders/fragmentshader.fs");
     Level1::texture.Setup(s.c_str());
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
 
     tileMap.Setup(shader, ss.str());
 
-    s = "res/textures/backgroundlevel" + ss.str() + ".png";
+    s = "./res/textures/backgroundlevel" + ss.str() + ".png";
     background.Setup(shader, s);
     background.SetScale(glm::vec3(1.0f, tileMap.GetMapHeight() * Game::tileSize, 1.0f));
     player.Setup(shader);

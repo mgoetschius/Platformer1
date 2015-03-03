@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "Input.h"
+#include <math.h>
 
 Player::Player()
 {
@@ -36,8 +37,6 @@ void Player::Setup(const Shader &shader)
 
 void Player::update(Game *game, TileMap &tileMap, double dt)
 {
-    //std::cout << "x: " << (int)(xPos) / 64 << "y: " << (int)(yPos+64)/64 << std::endl;
-
     glm::vec2 topLeft(xPos+1, (yPos+1));
     glm::vec2 topRight((xPos+Game::tileSize-1), (yPos+1));
     glm::vec2 bottomLeft(xPos+1, (yPos+Game::tileSize-1));
@@ -51,7 +50,6 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
         rightAnim.Update(dt);
         texCoordsIndex = rightAnim.GetCurFrame();
     }
-
     else if(Input::getKey(Input::KEY_A))
     {
         direction = -1;
@@ -97,7 +95,6 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
     if(doorIsOpen
        && tileMap.GetDoorCollision((int)((xPos+Game::tileSize/2)/Game::tileSize), (int) ((yPos+Game::tileSize/2) / Game::tileSize)))
     {
-        std::cout << "here\n";
         levelOver = true;
     }
 
@@ -168,6 +165,17 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
                 isDead = true;
             }
         }
+        //check yoyo collisions on each enemy
+        if(yoyo.GetXPos() + 16 > (*i)->GetXPos()
+           && (*i)->GetXPos() + Game::tileSize > yoyo.GetXPos()
+           && yoyo.GetYPos() + 16 > (*i)->GetYPos()
+           && (*i)->GetYPos() + Game::tileSize > yoyo.GetYPos()
+           && !(*i)->GetIsDead())
+        {
+            Game::audioPlayer.play(0);
+            (*i)->SetIsDead(true);
+            yoyo.SetReturning(true);
+        }
     }
     translation = glm::vec3(xPos, yPos, 0.0f);
     transMatrix = glm::mat4();
@@ -196,7 +204,7 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    yoyo.Update(xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction);
+    yoyo.Update(tileMap, xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction, dt);
 
 }
 
@@ -218,11 +226,39 @@ void Player::render()
 
 void Player::Move(TileMap tileMap, glm::vec2 top, glm::vec2 bottom, int direction)
 {
+    /*
+    int t = tileMap.GetTileInt(top.x, top.y);
+    int b = tileMap.GetTileInt(bottom.x, bottom.y);
+
+    if((t == 0 || t >= 36)
+       &&(b == 0 || b >= 36))
+    {
+        xPos += xSpeed * direction;
+    }
+    else if(b == 25)
+    {
+        xPos += xSpeed * direction;
+        if((int)xPos%64 != 0)
+            yPos = ((int)bottom.y * 64 - 2) - ((int)xPos%64) * cos(1.25);
+    }
+    else if(b == 26)
+    {
+        xPos += xSpeed * direction;
+        if((int)xPos%64 != 0)
+            yPos = ((int)bottom.y * 64 - 23) - ((int)xPos%64) * cos(1.25);
+    }else if(b == 27)
+    {
+        xPos += xSpeed * direction;
+        if((int)xPos%64 != 0)
+            yPos = ((int)bottom.y * 64 - 45) - ((int)xPos%64) * cos(1.25);
+    }
+   */
    if(!tileMap.GetTileCollision(top.x, top.y)
       && !tileMap.GetTileCollision(bottom.x, bottom.y))
    {
        xPos += xSpeed * direction;
    }
+
 }
 
 Player::~Player()
@@ -232,7 +268,7 @@ Player::~Player()
 
 void Player::SetupMesh()
 {
-    texture.Setup("res/textures/playeranim.png");
+    texture.Setup("./res/textures/playeranim.png");
     texCoords = texture.SetupTexCoords(Game::tileSize);
 
     GLfloat vertCoords[] =

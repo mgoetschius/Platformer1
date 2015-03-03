@@ -27,6 +27,7 @@ class TileMap
         int GetMapWidth() {return tileIndices[0].size();};
         void SetHasKey(bool value) {hasKey = value;};
         bool GetTileCollision(int x, int y);
+        int GetTileInt(int x, int y);
         bool GetKeyCollision(int x, int y);
         bool GetDoorCollision(int x, int y);
         bool GetLadderCollision(int x, int y);

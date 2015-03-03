@@ -9,15 +9,16 @@ Yoyo::Yoyo()
 
 void Yoyo::Setup(const Shader &shader, float x, float y)
 {
-    SetupMesh("res/textures/yoyo.png");
+    SetupMesh("./res/textures/yoyo.png");
     xPos = x;
     yPos = y;
     length = 0;
     maxLength = 128;
     minLength = 0;
-    outSpeed = 2.5;
+    outSpeed = 3.0;
     isOut = false;
     returning = false;
+    anim.Setup(1,4, 1, 0, .1);
 
     texCoordsIndex = 0;
 
@@ -32,11 +33,12 @@ void Yoyo::Setup(const Shader &shader, float x, float y)
     transMatrix = glm::scale(transMatrix, scale);
 }
 
-void Yoyo::Update(float x, float y, int direction)
+void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
 {
 
     if(!isOut)
     {
+        texCoordsIndex = 0;
         if(Input::getKey(Input::KEY_K))
         {
             isOut = true;
@@ -46,15 +48,18 @@ void Yoyo::Update(float x, float y, int direction)
     }
     else
     {
+        anim.Update(dt);
+        texCoordsIndex = anim.GetCurFrame();
         if(maxLength > 0)
         {
             if(Input::getKey(Input::KEY_K))
             {
 
-                   if(! returning && length < maxLength)
+                   if(! returning && length < maxLength
+                      && !tileMap.GetTileCollision((xPos + 16 + outSpeed)/64, (yPos+8)/64))
                    {
-                       length += outSpeed;
-                       xPos = x + length;
+                        length += outSpeed;
+                        xPos = x + length;
                    }
                    else
                    {
@@ -82,7 +87,8 @@ void Yoyo::Update(float x, float y, int direction)
             if(Input::getKey(Input::KEY_K))
             {
 
-                   if(! returning && length > maxLength)
+                   if(! returning && length > maxLength
+                      && !tileMap.GetTileCollision((xPos - outSpeed)/64, (yPos+8)/64))
                    {
                        length -= outSpeed;
                        xPos = x + length;
@@ -113,6 +119,25 @@ void Yoyo::Update(float x, float y, int direction)
     }
 
     yPos = y;
+
+    GLfloat tex[12];
+    tex[0] = texCoords[texCoordsIndex][0];
+    tex[1] = texCoords[texCoordsIndex][1];
+    tex[2] = texCoords[texCoordsIndex][2];
+    tex[3] = texCoords[texCoordsIndex][3];
+    tex[4] = texCoords[texCoordsIndex][4];
+    tex[5] = texCoords[texCoordsIndex][5];
+
+    tex[6] = texCoords[texCoordsIndex][0];
+    tex[7] = texCoords[texCoordsIndex][1];
+    tex[8] = texCoords[texCoordsIndex][4];
+    tex[9] = texCoords[texCoordsIndex][5];
+    tex[10] = texCoords[texCoordsIndex][6];
+    tex[11] = texCoords[texCoordsIndex][7];
+
+    glBindBuffer(GL_ARRAY_BUFFER, tbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     translation = glm::vec3(xPos, yPos, 0.0f);
     transMatrix = glm::mat4();
     transMatrix = glm::translate(transMatrix, translation);

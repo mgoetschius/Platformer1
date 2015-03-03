@@ -10,7 +10,7 @@ void Key::Setup(Shader & shader, int x, int y, int size)
     xPos = x;
     yPos = y;
 
-    SetupMesh("res/textures/key.png", size);
+    SetupMesh("./res/textures/key.png", size);
 
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
     translation = glm::vec3(xPos, yPos, 0.0f);

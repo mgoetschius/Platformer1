@@ -2,8 +2,8 @@
 
 TextRenderer::TextRenderer()
 {
-    shader.Setup("res/shaders/textvertexshader.vs", "res/shaders/textfragmentshader.fs");
-    std::string path = "res/textures/characters.png";
+    shader.Setup("./res/shaders/textvertexshader.vs", "./res/shaders/textfragmentshader.fs");
+    std::string path = "./res/textures/characters.png";
     texture.Setup(path.c_str());
 
     widthUniform = glGetUniformLocation(shader.program, "windowWidth" );

@@ -2,6 +2,8 @@
 #define YOYO_H
 #include "Texture.h"
 #include "Shader.h"
+#include "TileMap.h"
+#include "Animation.h"
 #include <vector>
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
@@ -14,8 +16,11 @@ class Yoyo
     public:
         Yoyo();
         void Setup(const Shader &shader, float x, float y);
-        void Update(float x, float y, int direction);
+        void Update(TileMap tileMap, float x, float y, int direction, double dt);
         void render();
+        float GetXPos() {return xPos;};
+        float GetYPos() {return yPos;};
+        void SetReturning(bool value) {returning = value;};
         virtual ~Yoyo();
     protected:
     private:
@@ -25,6 +30,7 @@ class Yoyo
         float outSpeed;
         bool isOut;
         bool returning;
+        Animation anim;
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo;
         glm::vec3 translation, rotation, scale;

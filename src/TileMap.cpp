@@ -13,10 +13,10 @@ TileMap::TileMap()
 
 void TileMap::Setup(Shader &shader, string levelNum)
 {
-    string s = "res/textures/level" + levelNum + ".png";
+    string s = "./res/textures/level" + levelNum + ".png";
     texture.Setup(s.c_str());
     texCoords = texture.SetupTexCoords(Game::tileSize);
-    s = "res/maps/level" + levelNum + ".txt";
+    s = "./res/maps/level" + levelNum + ".txt";
     LoadFromFile(s);
     BuildVertices(shader);
     mesh.Setup(vertices, indices, texture);
@@ -65,6 +65,19 @@ void TileMap::Render()
     if(!hasKey)
         key.render();
     door.render();
+}
+
+int TileMap::GetTileInt(int x, int y)
+{
+    if(x < 0 || x >= tileIndices[0].size() ||
+       y < 0 || y >= tileIndices.size())
+    {
+        return -1;
+    }
+    else
+    {
+        return tileInts[y][x];
+    }
 }
 
 bool TileMap::GetTileCollision(int x, int y)
@@ -199,12 +212,12 @@ void TileMap::BuildVertices(Shader &shader)
             }
             if(tileInts[y][x] == 57)
             {
-                enemies.push_back(new OrangeEnemy(shader, "res/textures/orangieanim.png", x * Game::tileSize, y * Game::tileSize));
+                enemies.push_back(new OrangeEnemy(shader, "./res/textures/orangieanim.png", x * Game::tileSize, y * Game::tileSize));
             }
 
             if(tileInts[y][x] == 58)
             {
-                enemies.push_back(new PurpleEnemy(shader, "res/textures/purpleie.png", x * Game::tileSize, y * Game::tileSize));
+                enemies.push_back(new PurpleEnemy(shader, "./res/textures/purpleie.png", x * Game::tileSize, y * Game::tileSize));
             }
             if(tileInts[y][x] == 63)
             {
