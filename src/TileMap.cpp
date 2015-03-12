@@ -88,7 +88,7 @@ bool TileMap::GetTileCollision(int x, int y)
         return true;
     }
     if (tileInts[y][x] == 0
-        || tileInts[y][x] > 36)
+        || tileInts[y][x] > 32)
         return false;
     else
         return true;
@@ -191,7 +191,7 @@ void TileMap::BuildVertices(Shader &shader)
         for(unsigned int x = 0; x < tileIndices[0].size(); x++)
         {
             if((tileInts[y][x] > 0
-               && tileInts[y][x] <= 36)
+               && tileInts[y][x] <= 56)
                || tileInts[y][x] == 64)
             {
                 Vertex v1(glm::vec3(x * Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][0], texCoords[atoi(tileIndices[y][x].c_str()) - 1][1]));

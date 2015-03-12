@@ -29,6 +29,7 @@ class Player
     protected:
     private:
         float xPos, yPos, xSpeed, ySpeed;
+        glm::vec2 topLeft, topRight, bottomLeft, bottomRight;
         int direction;
         float gravity;
         bool jumping = false;
@@ -47,8 +48,8 @@ class Player
         glm::mat4 transMatrix;
         float rotationAmount;
         void SetupMesh();
-        void Move(TileMap&, int dx);
-        void Move(TileMap tileMap, glm::vec2 top, glm::vec2 bottom, int direction);
+        void Move(TileMap &tileMap, glm::vec2 top, glm::vec2 bottom, int direction);
+        void MoveY(TileMap &tileMap);
         Animation rightAnim;
         Animation leftAnim;
         void UpdateAnimation(Animation &anim, double dt);

@@ -37,10 +37,11 @@ void Player::Setup(const Shader &shader)
 
 void Player::update(Game *game, TileMap &tileMap, double dt)
 {
-    glm::vec2 topLeft(xPos+1, (yPos+1));
-    glm::vec2 topRight((xPos+Game::tileSize-1), (yPos+1));
-    glm::vec2 bottomLeft(xPos+1, (yPos+Game::tileSize-1));
-    glm::vec2 bottomRight((xPos+Game::tileSize-1), (yPos+Game::tileSize-1));
+    topLeft = glm::vec2(xPos+1, (yPos+1));
+    topRight = glm::vec2((xPos+Game::tileSize-1), (yPos+1));
+    bottomLeft = glm::vec2(xPos+1, (yPos+Game::tileSize-1));
+    bottomRight = glm::vec2((xPos+Game::tileSize-1), (yPos+Game::tileSize-1));
+
     if(Input::getKey(Input::KEY_D))
     {
         direction = 1;
@@ -100,37 +101,7 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
 
     /// Gravity
 
-        if(onLadder)
-        {
-            jumping = false;
-            ySpeed = 0;
-            if(!tileMap.GetLadderCollision((int)((xPos+Game::tileSize/2)/Game::tileSize), (int) ((yPos+Game::tileSize) / Game::tileSize)))
-            {
-                jumping = true;
-                onLadder = false;
-            }
-        }
-        else if(tileMap.GetTileCollision((int) ((topLeft.x) / Game::tileSize), (int) ((topLeft.y+ySpeed + gravity) / Game::tileSize))
-           || tileMap.GetTileCollision((int) ((topRight.x) / Game::tileSize), (int) ((topRight.y+ySpeed + gravity) / Game::tileSize))
-                )
-        {
-            jumping = true;
-            ySpeed = 0;
-        }
-        else if(!tileMap.GetTileCollision((int) ((bottomLeft.x) / Game::tileSize), (int) ((bottomLeft.y+ySpeed + gravity) / Game::tileSize))
-           && !tileMap.GetTileCollision((int) ((bottomRight.x) / Game::tileSize), (int) ((bottomRight.y+ySpeed + gravity) / Game::tileSize))
-           )
-        {
-            jumping = true;
-            ySpeed += gravity;
-            yPos += ySpeed;
-        }
-
-        else
-        {
-            jumping = false;
-            ySpeed = 0;
-        }
+    MoveY(tileMap);
 
     if(jumping)
     {
@@ -224,41 +195,312 @@ void Player::render()
     yoyo.render();
 }
 
-void Player::Move(TileMap tileMap, glm::vec2 top, glm::vec2 bottom, int direction)
+void Player::Move(TileMap &tileMap, glm::vec2 top, glm::vec2 bottom, int direction)
 {
-    /*
     int t = tileMap.GetTileInt(top.x, top.y);
     int b = tileMap.GetTileInt(bottom.x, bottom.y);
 
-    if((t == 0 || t >= 36)
-       &&(b == 0 || b >= 36))
+    if((t == 0 || t >= 33)
+       &&(b == 0 || b >= 33))
     {
         xPos += xSpeed * direction;
     }
-    else if(b == 25)
-    {
-        xPos += xSpeed * direction;
-        if((int)xPos%64 != 0)
-            yPos = ((int)bottom.y * 64 - 2) - ((int)xPos%64) * cos(1.25);
-    }
-    else if(b == 26)
-    {
-        xPos += xSpeed * direction;
-        if((int)xPos%64 != 0)
-            yPos = ((int)bottom.y * 64 - 23) - ((int)xPos%64) * cos(1.25);
-    }else if(b == 27)
-    {
-        xPos += xSpeed * direction;
-        if((int)xPos%64 != 0)
-            yPos = ((int)bottom.y * 64 - 45) - ((int)xPos%64) * cos(1.25);
-    }
-   */
+   /*
    if(!tileMap.GetTileCollision(top.x, top.y)
       && !tileMap.GetTileCollision(bottom.x, bottom.y))
    {
        xPos += xSpeed * direction;
    }
+   */
 
+}
+
+void Player::MoveY(TileMap &tileMap)
+{
+	if(onLadder)
+	{
+		jumping = false;
+		ySpeed = 0;
+		if(!tileMap.GetLadderCollision((int)((xPos+Game::tileSize/2)/Game::tileSize), (int) ((yPos+Game::tileSize) / Game::tileSize)))
+		{
+			jumping = true;
+			onLadder = false;
+		}
+	}
+	else if (tileMap.GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 33)
+	{
+		if(jumping)
+		{
+			if( bottomRight.y + ySpeed + gravity < ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+			}
+		}
+		else
+		{
+			jumping = false;
+			yPos = ((int)(bottomRight.y) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25);
+		}
+	}
+	else if (tileMap.GetTileInt(bottomRight.x / Game::tileSize, (bottomRight.y + ySpeed + gravity) / Game::tileSize) == 33)
+	{
+		if(jumping)
+		{
+			if( bottomRight.y + ySpeed + gravity < ((int)(bottomRight.y + Game::tileSize + ySpeed + gravity) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+				yPos = ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25);
+			}
+		}
+	}
+	else if (tileMap.GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 34)
+	{
+		if(jumping)
+		{
+			if( bottomRight.y + ySpeed + gravity < ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+			}
+		}
+		else
+		{
+			jumping = false;
+			yPos = ((int)(bottomRight.y) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3);
+		}
+	}
+	else if (tileMap.GetTileInt(bottomRight.x / Game::tileSize, (bottomRight.y + ySpeed + gravity+1) / Game::tileSize) == 34)
+	{
+		if(jumping)
+		{
+			if( bottomRight.y + ySpeed + gravity < ((int)(bottomRight.y + Game::tileSize + ySpeed + gravity) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+				yPos = ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3);
+			}
+		}
+	}
+	else if (tileMap.GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 35)
+	{
+		if(jumping)
+		{
+			if( bottomRight.y + ySpeed + gravity < ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+			}
+		}
+		else
+		{
+			jumping = false;
+			yPos = ((int)(bottomRight.y) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3 + 2);
+		}
+	}
+	else if (tileMap.GetTileInt(bottomRight.x / Game::tileSize, (bottomRight.y + ySpeed + gravity) / Game::tileSize) == 35)
+	{
+		if(jumping)
+		{
+			if( bottomRight.y + ySpeed + gravity < ((int)(bottomRight.y + Game::tileSize + ySpeed + gravity) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+				yPos = ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+			}
+		}
+		else
+		{
+			yPos = ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+		}
+	}
+    else if (tileMap.GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 38)
+	{
+		if(jumping)
+		{
+			if( bottomLeft.y + ySpeed + gravity < ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+			}
+		}
+		else
+		{
+			jumping = false;
+			yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25);
+		}
+	}
+	else if (tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (bottomLeft.y + ySpeed + gravity) / Game::tileSize) == 38)
+	{
+		if(jumping)
+		{
+			if( bottomLeft.y + ySpeed + gravity < ((int)(bottomLeft.y + Game::tileSize + ySpeed + gravity) / Game::tileSize * Game::tileSize) - (Game::tileSize -(int)bottomLeft.x%Game::tileSize) * cos(1.25))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+				yPos = ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25);
+			}
+		}
+	}
+	else if (tileMap.GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 37)
+	{
+		if(jumping)
+		{
+			if( bottomLeft.y + ySpeed + gravity < ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize -(int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+			}
+		}
+		else
+		{
+			jumping = false;
+			yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3);
+		}
+	}
+	else if (tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (bottomLeft.y + ySpeed + gravity+1) / Game::tileSize) == 37)
+	{
+		if(jumping)
+		{
+			if( bottomLeft.y + ySpeed + gravity < ((int)(bottomLeft.y + Game::tileSize + ySpeed + gravity) / Game::tileSize * Game::tileSize) - (Game::tileSize -(int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+				yPos = ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3);
+			}
+		}
+	}
+	else if (tileMap.GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 36)
+	{
+		if(jumping)
+		{
+			if( bottomLeft.y + ySpeed + gravity < ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+			}
+		}
+		else
+		{
+			jumping = false;
+			yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3 + 2);
+		}
+	}
+	else if (tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (bottomLeft.y + ySpeed + gravity) / Game::tileSize) == 36)
+	{
+		if(jumping)
+		{
+			if( bottomLeft.y + ySpeed + gravity < ((int)(bottomLeft.y + Game::tileSize + ySpeed + gravity) / Game::tileSize * Game::tileSize) - (Game::tileSize -(int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3))
+			{
+				jumping = true;
+				ySpeed += gravity;
+				yPos += ySpeed;
+			}
+			else
+			{
+				jumping = false;
+				ySpeed = 0;
+				yPos = ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+			}
+		}
+		else
+		{
+			yPos = ((int)(bottomLeft.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+		}
+	}
+	else if(
+			(tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (int)(bottomLeft.y + ySpeed + gravity) / Game::tileSize) == 0
+				|| tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (int)(bottomLeft.y + ySpeed + gravity) / Game::tileSize) >= 48)
+			&&
+			(tileMap.GetTileInt(bottomRight.x / Game::tileSize, (int)(bottomRight.y + ySpeed + gravity) / Game::tileSize) == 0
+				|| tileMap.GetTileInt(bottomRight.x / Game::tileSize, (int)(bottomRight.y + ySpeed + gravity) / Game::tileSize) >= 48)
+			)
+	{
+		jumping = true;
+		ySpeed += gravity;
+		yPos += ySpeed;
+	}
+
+	else
+	{
+		jumping = false;
+		ySpeed = 0;
+	}
+
+	if(jumping)
+	{
+		if(direction > 0)
+		texCoordsIndex = 1;
+		else
+		texCoordsIndex = 0;
+	}
 }
 
 Player::~Player()

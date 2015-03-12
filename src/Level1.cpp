@@ -62,6 +62,7 @@ void Level1::Update(Game *game)
 
 void Level1::Render()
 {
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     shader.bind();
     int mapWidth = tileMap.GetMapWidth() * Game::tileSize;
     int offsetX = Game::windowWidth / 2 - (int)(player.GetXPos()) - Game::tileSize;
