@@ -56,15 +56,15 @@ void TileMap::Update(double dt)
 
 void TileMap::Render()
 {
+    if(!hasKey)
+        key.render();
+    door.render();
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     mesh.render();
     for(int i = 0; i < enemies.size(); i++)
     {
         enemies[i]->render();
     }
-    if(!hasKey)
-        key.render();
-    door.render();
 }
 
 int TileMap::GetTileInt(int x, int y)

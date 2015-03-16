@@ -71,16 +71,60 @@ void OrangeEnemy::Update(TileMap *tileMap, double dt)
 
         /// Gravity
 
-            if(tileMap->GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
-                    || tileMap->GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+ySpeed + gravity) / Game::tileSize))
-                    )
-            {
-                jumping = true;
-                ySpeed = 0;
-            }
-            if(!tileMap->GetTileCollision((int) ((xPos) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
-               && !tileMap->GetTileCollision((int) ((xPos+Game::tileSize) / Game::tileSize), (int) ((yPos+Game::tileSize+ySpeed + gravity) / Game::tileSize))
-               )
+        topLeft = glm::vec2(xPos+1, (yPos+1));
+        topRight = glm::vec2((xPos+Game::tileSize-1), (yPos+1));
+        bottomLeft = glm::vec2(xPos+32, (yPos+Game::tileSize-1));
+        bottomRight = glm::vec2((xPos+Game::tileSize-32), (yPos+Game::tileSize-1));
+
+        if(tileMap->GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 40)
+        {
+            yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25);
+        }
+        else if(tileMap->GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 39)
+        {
+            yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3);
+        }
+        else if(tileMap->GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 38)
+        {
+            yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomLeft.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+        }
+        else if(tileMap->GetTileInt(bottomLeft.x / Game::tileSize, (bottomLeft.y + ySpeed + gravity) / Game::tileSize) == 38)
+        {
+            yPos = ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - (Game::tileSize - (int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+        }
+        else if(tileMap->GetTileInt(bottomLeft.x / Game::tileSize, bottomLeft.y / Game::tileSize) == 37)
+        {
+            yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) -64;
+        }
+        else if(tileMap->GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 33)
+        {
+            yPos = ((int)(bottomRight.y) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25);
+        }
+        else if(tileMap->GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 34)
+        {
+            yPos = ((int)(bottomRight.y) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize/3);
+        }
+        else if(tileMap->GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 35)
+        {
+            yPos = ((int)(bottomRight.y) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+        }
+        else if(tileMap->GetTileInt(bottomRight.x / Game::tileSize, (bottomRight.y + ySpeed + gravity) / Game::tileSize) == 35)
+        {
+            yPos = ((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize) - ((int)bottomRight.x%Game::tileSize) * cos(1.25) - (Game::tileSize*2/3);
+        }
+        else if(tileMap->GetTileInt(bottomRight.x / Game::tileSize, bottomRight.y / Game::tileSize) == 36)
+        {
+            yPos = ((int)(bottomLeft.y) / Game::tileSize * Game::tileSize) -64;
+        }
+
+
+           else if(
+                    (tileMap->GetTileInt(bottomLeft.x / Game::tileSize, (int)(bottomLeft.y + ySpeed + gravity) / Game::tileSize) == 0
+                    || tileMap->GetTileInt(bottomLeft.x / Game::tileSize, (int)(bottomLeft.y + ySpeed + gravity) / Game::tileSize) >= 48)
+                    &&
+                    (tileMap->GetTileInt(bottomRight.x / Game::tileSize, (int)(bottomRight.y + ySpeed + gravity) / Game::tileSize) == 0
+                    || tileMap->GetTileInt(bottomRight.x / Game::tileSize, (int)(bottomRight.y + ySpeed + gravity) / Game::tileSize) >= 48)
+                  )
             {
                 jumping = true;
                 ySpeed += gravity;

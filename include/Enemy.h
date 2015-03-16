@@ -28,6 +28,7 @@ class Enemy
     protected:
         void SetupMesh(const char *filename);
         float xPos, yPos, xSpeed, ySpeed, gravity;
+        glm::vec2 topLeft, topRight, bottomLeft, bottomRight;
         int direction;
         bool jumping;
         bool isDead, remove;
