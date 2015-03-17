@@ -40,9 +40,9 @@ void Level1::Update(Game *game)
     }
     else if (player.GetLevelOver())
     {
-        if(level == 1)
+        if(level < 3)
         {
-            game->ChangeState(2);
+            game->ChangeState(++level);
         }
         else
         {

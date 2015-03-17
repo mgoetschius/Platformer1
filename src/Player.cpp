@@ -550,11 +550,33 @@ void Player::MoveY(TileMap &tileMap)
 		ySpeed += gravity;
 		yPos += ySpeed;
 	}
-
+    /*****************************************
+    // say else if (collision does occurr)
+    // then add a loop to make sure player
+    // is on the ground
+    *****************************************/
 	else
 	{
-		jumping = false;
-		ySpeed = 0;
+        while(true)
+        {
+            if((tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (int)(bottomLeft.y + gravity) / Game::tileSize) == 0
+                    || tileMap.GetTileInt(bottomLeft.x / Game::tileSize, (int)(bottomLeft.y + gravity) / Game::tileSize) >= 48)
+                &&
+                (tileMap.GetTileInt(bottomRight.x / Game::tileSize, (int)(bottomRight.y + gravity) / Game::tileSize) == 0
+                    || tileMap.GetTileInt(bottomRight.x / Game::tileSize, (int)(bottomRight.y + gravity) / Game::tileSize) >= 48)
+                )
+            {
+                yPos += gravity;
+                bottomLeft = glm::vec2(xPos+1, (yPos+Game::tileSize-1));
+                bottomRight = glm::vec2((xPos+Game::tileSize-1), (yPos+Game::tileSize-1));
+            }
+            else
+            {
+                jumping = false;
+                ySpeed = 0;
+                break;
+            }
+        }
 	}
 
 	if(jumping)
