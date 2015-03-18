@@ -1,6 +1,7 @@
 #include "Yoyo.h"
 #include "Game.h"
 #include "Input.h"
+#include "JoyStick.h"
 
 Yoyo::Yoyo()
 {
@@ -39,10 +40,22 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
     if(!isOut)
     {
         texCoordsIndex = 0;
-        if(Input::getKey(Input::KEY_K))
+        if(JoyStick::isJoyStick)
         {
-            isOut = true;
-            maxLength *= direction;
+            if(JoyStick::GetButtons(JoyStick::buttonB))
+            {
+                isOut = true;
+                maxLength *= direction;
+            }
+
+        }
+        else
+        {
+            if(Input::getKey(Input::KEY_K))
+            {
+                isOut = true;
+                maxLength *= direction;
+            }
         }
         xPos = x;
     }
@@ -52,66 +65,137 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
         texCoordsIndex = anim.GetCurFrame();
         if(maxLength > 0)
         {
-            if(Input::getKey(Input::KEY_K))
+            if(JoyStick::isJoyStick)
             {
+                if(JoyStick::GetButtons(JoyStick::buttonB))
+                {
 
-                   if(! returning && length < maxLength
-                      && !tileMap.GetTileCollision((xPos + 16 + outSpeed)/64, (yPos+8)/64))
-                   {
-                        length += outSpeed;
-                        xPos = x + length;
-                   }
-                   else
-                   {
-                       returning = true;
-                       length -= outSpeed;
-                       xPos = x + length;
-                   }
+                       if(! returning && length < maxLength
+                          && !tileMap.GetTileCollision((xPos + 16 + outSpeed)/64, (yPos+8)/64))
+                       {
+                            length += outSpeed;
+                            xPos = x + length;
+                       }
+                       else
+                       {
+                           returning = true;
+                           length -= outSpeed;
+                           xPos = x + length;
+                       }
+                }
+                else
+                {
+                    returning = true;
+                    length -= outSpeed;
+                    xPos = x + length;
+                }
+                if(length <= 0)
+                {
+                    isOut = false;
+                    returning = false;
+                    maxLength = 128;
+                    xPos = x;
+                }
+
             }
             else
             {
-                returning = true;
-                length -= outSpeed;
-                xPos = x + length;
-            }
-            if(length <= 0)
-            {
-                isOut = false;
-                returning = false;
-                maxLength = 128;
-                xPos = x;
+                if(Input::getKey(Input::KEY_K))
+                {
+
+                       if(! returning && length < maxLength
+                          && !tileMap.GetTileCollision((xPos + 16 + outSpeed)/64, (yPos+8)/64))
+                       {
+                            length += outSpeed;
+                            xPos = x + length;
+                       }
+                       else
+                       {
+                           returning = true;
+                           length -= outSpeed;
+                           xPos = x + length;
+                       }
+                }
+                else
+                {
+                    returning = true;
+                    length -= outSpeed;
+                    xPos = x + length;
+                }
+                if(length <= 0)
+                {
+                    isOut = false;
+                    returning = false;
+                    maxLength = 128;
+                    xPos = x;
+                }
             }
         }
         else /// maxLength < 0
         {
-            if(Input::getKey(Input::KEY_K))
+            if(JoyStick::isJoyStick)
             {
+                if(JoyStick::GetButtons(JoyStick::buttonB))
+                {
 
-                   if(! returning && length > maxLength
-                      && !tileMap.GetTileCollision((xPos - outSpeed)/64, (yPos+8)/64))
-                   {
-                       length -= outSpeed;
-                       xPos = x + length;
-                   }
-                   else
-                   {
-                       returning = true;
-                       length += outSpeed;
-                       xPos = x + length;
-                   }
+                       if(! returning && length > maxLength
+                          && !tileMap.GetTileCollision((xPos - outSpeed)/64, (yPos+8)/64))
+                       {
+                           length -= outSpeed;
+                           xPos = x + length;
+                       }
+                       else
+                       {
+                           returning = true;
+                           length += outSpeed;
+                           xPos = x + length;
+                       }
+                }
+                else
+                {
+                    returning = true;
+                    length += outSpeed;
+                    xPos = x + length;
+                }
+                if(length >= 0)
+                {
+                    isOut = false;
+                    returning = false;
+                    maxLength = 128;
+                    xPos = x;
+                }
             }
             else
             {
-                returning = true;
-                length += outSpeed;
-                xPos = x + length;
-            }
-            if(length >= 0)
-            {
-                isOut = false;
-                returning = false;
-                maxLength = 128;
-                xPos = x;
+                if(Input::getKey(Input::KEY_K))
+                {
+
+                       if(! returning && length > maxLength
+                          && !tileMap.GetTileCollision((xPos - outSpeed)/64, (yPos+8)/64))
+                       {
+                           length -= outSpeed;
+                           xPos = x + length;
+                       }
+                       else
+                       {
+                           returning = true;
+                           length += outSpeed;
+                           xPos = x + length;
+                       }
+                }
+                else
+                {
+                    returning = true;
+                    length += outSpeed;
+                    xPos = x + length;
+                }
+                if(length >= 0)
+                {
+                    isOut = false;
+                    returning = false;
+                    maxLength = 128;
+                    xPos = x;
+                }
             }
         }
 
