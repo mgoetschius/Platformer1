@@ -11,6 +11,7 @@ Player::Player()
 
 void Player::Setup(const Shader &shader)
 {
+    s = shader;
     xPos = 63;
     yPos = 8*Game::tileSize;
     xSpeed = 5;
@@ -33,7 +34,7 @@ void Player::Setup(const Shader &shader)
 
     SetupMesh();
 
-    yoyo.Setup(shader, xPos, yPos);
+    //yoyo.Setup(shader, xPos, yPos);
 }
 
 void Player::update(Game *game, TileMap &tileMap, double dt)
@@ -135,6 +136,11 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
                    }
             }
         }
+        if(Input::getKeyOnce(Input::KEY_K))
+        {
+            if(fireBalls.size() < 15)
+                fireBalls.push_back(new FireBall(s, xPos + Game::tileSize/32, yPos + Game::tileSize/2 - 8, direction));
+        }
     }
     if(!doorIsOpen
        && tileMap.GetKeyCollision((int)((xPos+Game::tileSize/2)/Game::tileSize), (int) ((yPos+Game::tileSize/2) / Game::tileSize)))
@@ -189,6 +195,7 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
             }
         }
         //check yoyo collisions on each enemy
+        /*
         if(yoyo.GetXPos() + 16 > (*i)->GetXPos()
            && (*i)->GetXPos() + Game::tileSize > yoyo.GetXPos()
            && yoyo.GetYPos() + 16 > (*i)->GetYPos()
@@ -199,6 +206,23 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
             (*i)->SetIsDead(true);
             yoyo.SetReturning(true);
         }
+        */
+
+        /// check fireball collisions
+        for(std::vector<FireBall*>::iterator j = fireBalls.begin(); j != fireBalls.end(); j++)
+        {
+            if((*j)->GetXPos() + 16 > (*i)->GetXPos()
+           && (*i)->GetXPos() + Game::tileSize > (*j)->GetXPos()
+           && (*j)->GetYPos() + 16 > (*i)->GetYPos()
+           && (*i)->GetYPos() + Game::tileSize > (*j)->GetYPos()
+           && !(*i)->GetIsDead())
+        {
+            Game::audioPlayer.play(0);
+            (*i)->SetIsDead(true);
+            (*j)->SetRemove(true);
+        }
+        }
+
     }
     translation = glm::vec3(xPos, yPos, 0.0f);
     transMatrix = glm::mat4();
@@ -227,7 +251,23 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    yoyo.Update(tileMap, xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction, dt);
+    //yoyo.Update(tileMap, xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction, dt);
+    //fireBall.Update(tileMap, dt);
+    for(std::vector<FireBall*>::iterator i = fireBalls.begin(); i != fireBalls.end(); i++)
+        (*i)->Update(tileMap, dt, xPos);
+
+    for(std::vector<FireBall*>::iterator i = fireBalls.begin(); i != fireBalls.end();)
+    {
+        if((*i)->GetRemove())
+        {
+            delete *i;
+            i = fireBalls.erase(i);
+        }
+        else
+        {
+            i++;
+        }
+    }
 
 }
 
@@ -244,7 +284,11 @@ void Player::render()
     glBindVertexArray(0);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-    yoyo.render();
+    //yoyo.render();
+    //fireBall.render();
+    for(std::vector<FireBall*>::iterator i = fireBalls.begin(); i != fireBalls.end(); i++)
+        (*i)->render();
+
 }
 
 void Player::Move(TileMap &tileMap, glm::vec2 top, glm::vec2 bottom, int direction)

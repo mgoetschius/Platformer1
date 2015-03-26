@@ -40,9 +40,11 @@ class Input
         static void setKeyTrue(int key);
         static void setKeyFalse(int key);
         static bool getKey(int key);
+        static bool getKeyOnce(int key);
     protected:
     private:
         static bool keys[];
+        static bool keyonce[];
 
 };
 

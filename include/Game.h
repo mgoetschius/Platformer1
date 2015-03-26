@@ -4,6 +4,7 @@
 #include <iostream>
 #include "GameState.h"
 #include "Level1.h"
+#include "StartScreen.h"
 #include "AudioPlayer.h"
 
 enum GameStates

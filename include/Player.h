@@ -7,6 +7,7 @@
 #include "Animation.h"
 #include "TileMap.h"
 #include "Yoyo.h"
+#include "FireBall.h"
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -40,7 +41,7 @@ class Player
         GLuint transUniform, projUniform;
         GLuint vao, vbo, tbo, ibo;
         std::vector<GLuint> indices;
-        Shader shader;
+        Shader s;
         Texture texture;
         std::vector<std::vector<float>> texCoords;
         int texCoordsIndex;
@@ -53,7 +54,8 @@ class Player
         Animation rightAnim;
         Animation leftAnim;
         void UpdateAnimation(Animation &anim, double dt);
-        Yoyo yoyo;
+        //Yoyo yoyo;
+        std::vector<FireBall*> fireBalls;
 };
 
 #endif // PLAYER_H

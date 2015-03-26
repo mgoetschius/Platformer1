@@ -234,7 +234,6 @@ void TileMap::BuildVertices(Shader &shader)
 
 void TileMap::CleanUp()
 {
-    std::cout << "Cleaning up TileMap\n";
     for(std::vector<Enemy*>::iterator it = enemies.begin(); it != enemies.end(); it++)
     {
         delete (*it);
