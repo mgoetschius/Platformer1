@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "JoyStick.h"
 #include <math.h>
+#include "TextureManager.h"
 
 Player::Player()
 {
@@ -32,6 +33,7 @@ void Player::Setup(const Shader &shader)
     transMatrix = glm::rotate(transMatrix, glm::radians(rotationAmount),  rotation);
     transMatrix = glm::scale(transMatrix, scale);
 
+    texture = TextureManager::LoadTexture("./res/textures/playeranim.png");
     SetupMesh();
 
     //yoyo.Setup(shader, xPos, yPos);
@@ -281,7 +283,7 @@ void Player::render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -794,8 +796,7 @@ Player::~Player()
 
 void Player::SetupMesh()
 {
-    texture.Setup("./res/textures/playeranim.png");
-    texCoords = texture.SetupTexCoords(Game::tileSize);
+    texCoords = texture->SetupTexCoords(Game::tileSize);
 
     GLfloat vertCoords[] =
     {

@@ -1,4 +1,6 @@
 #include "Key.h"
+#include "TextureManager.h"
+
 
 Key::Key()
 {
@@ -10,6 +12,7 @@ void Key::Setup(Shader & shader, int x, int y, int size)
     xPos = x;
     yPos = y;
 
+    texture = TextureManager::LoadTexture("./res/textures/key.png");
     SetupMesh("./res/textures/key.png", size);
 
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
@@ -28,7 +31,7 @@ void Key::render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -40,8 +43,7 @@ void Key::render()
 
 void Key::SetupMesh(const char *filename, int size)
 {
-    texture.Setup(filename);
-    texCoords = texture.SetupTexCoords(size);
+    texCoords = texture->SetupTexCoords(size);
 
     GLfloat vertCoords[] =
     {

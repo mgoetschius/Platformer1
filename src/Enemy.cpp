@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Game.h"
+#include "TextureManager.h"
 #include <GL/glfw3.h>
 
 Enemy::Enemy()
@@ -17,7 +18,7 @@ Enemy::Enemy(Shader &shader, const char *filename, float x, float y)
     gravity = .2f;
     isDead = false;
     remove = false;
-
+    texture = TextureManager::LoadTexture(filename);
     texCoordsIndex = 0;
     rightAnim.Setup(2, 3, 2);
     leftAnim.Setup(0, 1, 0);
@@ -43,7 +44,7 @@ void Enemy::render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -55,8 +56,7 @@ void Enemy::render()
 
 void Enemy::SetupMesh(const char *filename)
 {
-    texture.Setup(filename);
-    texCoords = texture.SetupTexCoords(Game::tileSize);
+    texCoords = texture->SetupTexCoords(Game::tileSize);
 
     GLfloat vertCoords[] =
     {
@@ -107,5 +107,4 @@ void Enemy::SetupMesh(const char *filename)
 
 Enemy::~Enemy()
 {
-    //dtor
 }

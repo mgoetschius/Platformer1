@@ -42,7 +42,7 @@ class Player
         GLuint vao, vbo, tbo, ibo;
         std::vector<GLuint> indices;
         Shader s;
-        Texture texture;
+        Texture *texture;
         std::vector<std::vector<float>> texCoords;
         int texCoordsIndex;
         glm::vec3 translation, rotation, scale;

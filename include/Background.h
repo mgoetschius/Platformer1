@@ -20,11 +20,11 @@ class Background
         void SetScale(glm::vec3 s) {scale = s;};
         void SetTranslation(glm::vec3 trans) {translation = trans;};
         void Setup(Shader shader, const std::string &filepath);
-        int GetWidth() {return texture.GetWidth();};
+        int GetWidth() {return texture->GetWidth();};
         virtual ~Background();
     protected:
     private:
-        Texture texture;
+        Texture *texture;
         Mesh mesh;
         glm::vec3 translation;
         glm::vec3 rotation;

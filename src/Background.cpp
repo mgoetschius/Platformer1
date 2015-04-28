@@ -1,6 +1,7 @@
 #include "Background.h"
 
 #include "Vertex.h"
+#include "TextureManager.h"
 #include <vector>
 
 Background::Background()
@@ -10,14 +11,14 @@ Background::Background()
 
 void Background::Setup(Shader shader, const std::string &filepath)
 {
-    texture.Setup(filepath.c_str());
+    texture = TextureManager::LoadTexture(filepath.c_str());
 
     std::vector<Vertex> vertexArray;
     std::vector<GLuint> indices;
 
     Vertex v1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f));
-    Vertex v2(glm::vec3(texture.GetWidth(), 0.0f,0.0f), glm::vec2(1.0f, 0.0f));
-    Vertex v3(glm::vec3(texture.GetWidth(), 1.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+    Vertex v2(glm::vec3(texture->GetWidth(), 0.0f,0.0f), glm::vec2(1.0f, 0.0f));
+    Vertex v3(glm::vec3(texture->GetWidth(), 1.0f, 0.0f), glm::vec2(1.0f, 1.0f));
     Vertex v4(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f));
     vertexArray.push_back(v1);
     vertexArray.push_back(v2);

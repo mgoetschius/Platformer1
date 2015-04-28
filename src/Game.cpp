@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "TextureManager.h"
 
 int Game::windowWidth = 720;
 int Game::windowHeight = 680;
@@ -30,6 +31,7 @@ void Game::Render()
 
 void Game::ChangeState(int state)
 {
+    TextureManager::Clear();
     delete gameState;
     gameState = new Level1();
     gameState->Init(state);

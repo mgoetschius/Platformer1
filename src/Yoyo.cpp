@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Input.h"
 #include "JoyStick.h"
+#include "TextureManager.h"
 
 Yoyo::Yoyo()
 {
@@ -10,7 +11,7 @@ Yoyo::Yoyo()
 
 void Yoyo::Setup(const Shader &shader, float x, float y)
 {
-    SetupMesh("./res/textures/yoyo.png");
+    texture = TextureManager::LoadTexture("./res/textures/yoyo.png");
     xPos = x;
     yPos = y;
     length = 0;
@@ -235,7 +236,7 @@ void Yoyo::render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -252,8 +253,7 @@ Yoyo::~Yoyo()
 
 void Yoyo::SetupMesh(const char *filename)
 {
-    texture.Setup(filename);
-    texCoords = texture.SetupTexCoords(16);
+    texCoords = texture->SetupTexCoords(16);
 
     GLfloat vertCoords[] =
     {

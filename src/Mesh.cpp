@@ -7,7 +7,7 @@ Mesh::Mesh()
 
 }
 
-void Mesh::Setup(std::vector<Vertex> vert, std::vector<GLuint> ind, Texture &tex)
+void Mesh::Setup(std::vector<Vertex> vert, std::vector<GLuint> ind, Texture *&tex)
 {
     vertexArray.clear();
     indices.clear();
@@ -62,7 +62,7 @@ void Mesh::render()
     glBindVertexArray(vao);
     //make sure soil is loading RGBA image
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

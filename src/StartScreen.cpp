@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "JoyStick.h"
 #include <iostream>
+#include "TextureManager.h"
 
 StartScreen::StartScreen()
 {
@@ -10,7 +11,7 @@ StartScreen::StartScreen()
 void StartScreen::Init(int levelNum)
 {
     shader.Setup("./res/shaders/vertexshader.vs", "./res/shaders/fragmentshader.fs");
-    texture.Setup("./res/textures/startscreen.png");
+    texture = TextureManager::LoadTexture("./res/textures/startscreen.png");
 
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
@@ -97,7 +98,7 @@ void StartScreen::Render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -20,7 +20,7 @@ class FireBall
         float GetXPos() {return xPos;};
         float GetYPos() {return yPos;};
         bool GetRemove() {return remove;};
-        bool SetRemove(bool r) {remove = r;};
+        void SetRemove(bool r) {remove = r;};
         void render();
         virtual ~FireBall();
     protected:
@@ -34,7 +34,7 @@ class FireBall
         glm::vec3 translation, rotation, scale;
         glm::mat4 transMatrix;
         float rotationAmount;
-        Texture texture;
+        Texture *texture;
         std::vector<std::vector<float>> texCoords;
         int texCoordsIndex;
 

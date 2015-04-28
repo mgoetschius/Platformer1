@@ -18,7 +18,7 @@ class Level1 : public GameState
         void Update(Game *game);
         void Render();
         virtual ~Level1();
-        static Texture texture;
+        static Texture *texture;
     protected:
     private:
         Shader shader;

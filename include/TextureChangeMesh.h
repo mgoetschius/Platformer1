@@ -8,7 +8,7 @@ class TextureChangeMesh
 {
     public:
         TextureChangeMesh();
-        void Setup(GLfloat verts[], GLfloat tex[], GLuint inds[], Texture &text);
+        void Setup(GLfloat verts[], GLfloat tex[], GLuint inds[], Texture *text);
         void render();
         virtual ~TextureChangeMesh();
     protected:
@@ -16,7 +16,7 @@ class TextureChangeMesh
         GLuint vao, vbo, tbo, ibo;
         int indicesCount;
         int size;
-        Texture texture;
+        Texture *texture;
 };
 
 #endif // TEXTURECHANGEMESH_H

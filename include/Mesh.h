@@ -12,7 +12,7 @@ class Mesh
 {
     public:
         Mesh();
-        void Setup(std::vector<Vertex> vert, std::vector<GLuint> ind, Texture &tex);
+        void Setup(std::vector<Vertex> vert, std::vector<GLuint> ind, Texture *&tex);
         void update();
         void render();
         virtual ~Mesh();
@@ -22,7 +22,7 @@ class Mesh
         int indicesCount;
         std::vector<Vertex> vertexArray;
         std::vector<GLuint> indices;
-        Texture texture;
+        Texture *texture;
 };
 
 #endif // MESH_H

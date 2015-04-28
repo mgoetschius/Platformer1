@@ -9,6 +9,7 @@ class Texture
 {
     public:
         Texture();
+        Texture(const char * filepath);
         void Setup(const char * filepath);
         GLuint loadTexture(const char * filepath);
         GLuint GetTexture() { return texID; };

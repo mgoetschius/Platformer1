@@ -1,8 +1,10 @@
 #include "OrangeEnemy.h"
 #include "Game.h"
+#include "TextureManager.h"
 
 OrangeEnemy::OrangeEnemy(Shader &shader, const char *filename, float x, float y)
 {
+    texture = TextureManager::LoadTexture(filename);
     SetupMesh(filename);
     xPos = x;
     yPos = y;
@@ -176,5 +178,5 @@ void OrangeEnemy::Update(TileMap *tileMap, double dt)
 
 OrangeEnemy::~OrangeEnemy()
 {
-    //dtor
+
 }

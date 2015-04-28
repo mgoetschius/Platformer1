@@ -18,7 +18,7 @@ class TextRenderer
     protected:
     private:
         Shader shader;
-        Texture texture;
+        Texture *texture;
         std::vector<glm::vec3> vertices;
         std::vector<glm::vec2> texCoords;
         GLuint vao, verticesBuffer, texCoordsBuffer;

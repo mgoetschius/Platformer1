@@ -37,7 +37,7 @@ class Enemy
         glm::vec3 translation, rotation, scale;
         glm::mat4 transMatrix;
         float rotationAmount;
-        Texture texture;
+        Texture *texture;
         std::vector<std::vector<float>> texCoords;
         Animation rightAnim, leftAnim;
         int texCoordsIndex;

@@ -8,6 +8,11 @@ Texture::Texture()
     //ctor
 }
 
+Texture::Texture(const char * filepath)
+{
+    texID = loadTexture(filepath);
+}
+
 void Texture::Setup(const char * filepath)
 {
     texID = loadTexture(filepath);

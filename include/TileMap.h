@@ -35,7 +35,7 @@ class TileMap
         std::vector<Enemy*>* GetEnemies() {return &enemies;};
     protected:
     private:
-        Texture texture;
+        Texture *texture;
         Mesh mesh;
         glm::vec3 translation;
         glm::vec3 rotation;

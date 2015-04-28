@@ -1,5 +1,7 @@
 #include "FireBall.h"
 #include "Game.h"
+#include "TextureManager.h"
+
 
 FireBall::FireBall()
 {
@@ -8,6 +10,7 @@ FireBall::FireBall()
 
 FireBall::FireBall(const Shader &shader, float x, float y, int direction)
 {
+    texture = TextureManager::LoadTexture("./res/textures/fireball.png");
     SetupMesh("./res/textures/fireball.png");
     xPos = x;
     yPos = y;
@@ -31,6 +34,7 @@ FireBall::FireBall(const Shader &shader, float x, float y, int direction)
 
 void FireBall::Setup(const Shader &shader, float x, float y)
 {
+    texture = TextureManager::LoadTexture("./res/textures/fireball.png");
     SetupMesh("./res/textures/fireball.png");
     xPos = x;
     yPos = y;
@@ -97,7 +101,7 @@ void FireBall::render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -114,8 +118,7 @@ FireBall::~FireBall()
 
 void FireBall::SetupMesh(const char *filename)
 {
-    texture.Setup(filename);
-    texCoords = texture.SetupTexCoords(16);
+    texCoords = texture->SetupTexCoords(16);
 
     GLfloat vertCoords[] =
     {

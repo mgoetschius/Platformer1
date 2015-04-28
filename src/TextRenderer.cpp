@@ -1,10 +1,11 @@
 #include "TextRenderer.h"
+#include "TextureManager.h"
 
 TextRenderer::TextRenderer()
 {
     shader.Setup("./res/shaders/textvertexshader.vs", "./res/shaders/textfragmentshader.fs");
     std::string path = "./res/textures/characters.png";
-    texture.Setup(path.c_str());
+    texture = TextureManager::LoadTexture(path.c_str());
 
     widthUniform = glGetUniformLocation(shader.program, "windowWidth" );
     heightUniform = glGetUniformLocation(shader.program, "windowHeight" );
@@ -72,7 +73,7 @@ void TextRenderer::renderText(std::string text, int x, int y, int size, int wind
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0 );
 
     glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+	glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

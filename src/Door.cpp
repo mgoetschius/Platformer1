@@ -1,4 +1,5 @@
 #include "Door.h"
+#include "TextureManager.h"
 
 Door::Door()
 {
@@ -9,7 +10,7 @@ void Door::Setup(Shader & shader, int x, int y, int size)
 {
     xPos = x;
     yPos = y;
-
+    texture = TextureManager::LoadTexture("./res/textures/door.png");
     SetupMesh("./res/textures/door.png", size);
 
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
@@ -50,7 +51,7 @@ void Door::render()
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glBindTexture(GL_TEXTURE_2D, texture->GetTexture());
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -62,8 +63,7 @@ void Door::render()
 
 void Door::SetupMesh(const char *filename, int size)
 {
-    texture.Setup(filename);
-    texCoords = texture.SetupTexCoords(size);
+    texCoords = texture->SetupTexCoords(size);
 
     GLfloat vertCoords[] =
     {

@@ -4,8 +4,9 @@
 #include <string>
 #include <sstream>
 #include "Input.h"
+#include "TextureManager.h"
 
-Texture Level1::texture;
+Texture *Level1::texture;
 
 Level1::Level1()
 {
@@ -20,7 +21,7 @@ void Level1::Init(int levelNum)
 
     string s = "./res/textures/level" + ss.str() + ".png";
     shader.Setup("./res/shaders/vertexshader.vs", "./res/shaders/fragmentshader.fs");
-    Level1::texture.Setup(s.c_str());
+    texture = TextureManager::LoadTexture(s.c_str());
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
 
     tileMap.Setup(shader, ss.str());

@@ -79,7 +79,7 @@ void Model::getMesh(std::string name)
         for(int i = 0; i < 6; i++)
         indices.push_back(ind[i]);
 
-        //Texture texture;
+        //Texture *texture;
         //std::string path = "./res/textures/" + name + ".png";
         //texture.Setup(path.c_str());
         //mesh.Setup(vertexArray, indices, texture);

@@ -1,7 +1,7 @@
 #include "TileMap.h"
 #include "Model.h"
 #include "Game.h"
-
+#include "TextureManager.h"
 #include<iostream>
 #include<fstream>
 #include<algorithm>
@@ -14,8 +14,8 @@ TileMap::TileMap()
 void TileMap::Setup(Shader &shader, string levelNum)
 {
     string s = "./res/textures/level" + levelNum + ".png";
-    texture.Setup(s.c_str());
-    texCoords = texture.SetupTexCoords(Game::tileSize);
+    texture = TextureManager::LoadTexture(s.c_str());
+    texCoords = texture->SetupTexCoords(Game::tileSize);
     s = "./res/maps/level" + levelNum + ".txt";
     LoadFromFile(s);
     BuildVertices(shader);
