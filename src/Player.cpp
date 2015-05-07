@@ -36,7 +36,9 @@ void Player::Setup(const Shader &shader)
     texture = TextureManager::LoadTexture("./res/textures/playeranim.png");
     SetupMesh();
 
-    //yoyo.Setup(shader, xPos, yPos);
+    useFireBalls = false;
+    yoyo.Setup(shader, xPos, yPos);
+    useYoYo = true;
 }
 
 void Player::update(Game *game, TileMap &tileMap, double dt)
@@ -91,9 +93,9 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
                    }
             }
         }
-        if(JoyStick::GetButtonsOnce(JoyStick::buttonB))
+        if(JoyStick::GetButtonsOnce(JoyStick::buttonB) && useFireBalls)
         {
-            if(fireBalls.size() < 15)
+            if(fireBalls.size() < 5)
                 fireBalls.push_back(new FireBall(s, xPos + Game::tileSize/32, yPos + Game::tileSize/2 - 8, direction));
         }
 
@@ -143,9 +145,9 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
                    }
             }
         }
-        if(Input::getKeyOnce(Input::KEY_K))
+        if(Input::getKeyOnce(Input::KEY_K)  && useFireBalls)
         {
-            if(fireBalls.size() < 15)
+            if(fireBalls.size() < 5)
                 fireBalls.push_back(new FireBall(s, xPos + Game::tileSize/32, yPos + Game::tileSize/2 - 8, direction));
         }
     }
@@ -202,18 +204,20 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
             }
         }
         //check yoyo collisions on each enemy
-        /*
-        if(yoyo.GetXPos() + 16 > (*i)->GetXPos()
-           && (*i)->GetXPos() + Game::tileSize > yoyo.GetXPos()
-           && yoyo.GetYPos() + 16 > (*i)->GetYPos()
-           && (*i)->GetYPos() + Game::tileSize > yoyo.GetYPos()
-           && !(*i)->GetIsDead())
+        if(useYoYo)
         {
-            Game::audioPlayer.play(0);
-            (*i)->SetIsDead(true);
-            yoyo.SetReturning(true);
+            if(yoyo.GetXPos() + 16 > (*i)->GetXPos()
+               && (*i)->GetXPos() + Game::tileSize > yoyo.GetXPos()
+               && yoyo.GetYPos() + 16 > (*i)->GetYPos()
+               && (*i)->GetYPos() + Game::tileSize > yoyo.GetYPos()
+               && !(*i)->GetIsDead())
+            {
+                Game::audioPlayer.play(0);
+                (*i)->SetIsDead(true);
+                yoyo.SetReturning(true);
+            }
         }
-        */
+
 
         /// check fireball collisions
         for(std::vector<FireBall*>::iterator j = fireBalls.begin(); j != fireBalls.end(); j++)
@@ -258,7 +262,8 @@ void Player::update(Game *game, TileMap &tileMap, double dt)
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(tex), tex);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    //yoyo.Update(tileMap, xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction, dt);
+    if(useYoYo)
+        yoyo.Update(tileMap, xPos + Game::tileSize/2, yPos + Game::tileSize/2, direction, dt);
     //fireBall.Update(tileMap, dt);
     for(std::vector<FireBall*>::iterator i = fireBalls.begin(); i != fireBalls.end(); i++)
         (*i)->Update(tileMap, dt, xPos);
@@ -291,7 +296,8 @@ void Player::render()
     glBindVertexArray(0);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-    //yoyo.render();
+    if(useYoYo)
+        yoyo.render();
     //fireBall.render();
     for(std::vector<FireBall*>::iterator i = fireBalls.begin(); i != fireBalls.end(); i++)
         (*i)->render();
@@ -709,7 +715,7 @@ void Player::MoveY(TileMap &tileMap)
     {
         if(jumping)
         {
-            if (yPos + ySpeed + gravity < ((int)(yPos+64) / Game::tileSize * Game::tileSize))//((int)(bottomRight.y + Game::tileSize) / Game::tileSize * Game::tileSize))
+            if (yPos + ySpeed + gravity < ((int)(yPos+64) / Game::tileSize * Game::tileSize))
             {
                 jumping = true;
 				ySpeed += gravity;
@@ -717,7 +723,7 @@ void Player::MoveY(TileMap &tileMap)
 			}
 			else
             {
-                jumping = true;
+                jumping = false;
                 ySpeed = 0;
             }
         }

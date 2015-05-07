@@ -12,6 +12,7 @@ Yoyo::Yoyo()
 void Yoyo::Setup(const Shader &shader, float x, float y)
 {
     texture = TextureManager::LoadTexture("./res/textures/yoyo.png");
+    SetupMesh("./res/textures/yoyo.png");
     xPos = x;
     yPos = y;
     length = 0;
@@ -37,7 +38,6 @@ void Yoyo::Setup(const Shader &shader, float x, float y)
 
 void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
 {
-
     if(!isOut)
     {
         texCoordsIndex = 0;
@@ -70,7 +70,6 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
             {
                 if(JoyStick::GetButtons(JoyStick::buttonB))
                 {
-
                        if(! returning && length < maxLength
                           && !tileMap.GetTileCollision((xPos + 16 + outSpeed)/64, (yPos+8)/64))
                        {
@@ -79,22 +78,49 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
                        }
                        else
                        {
-                           returning = true;
-                           length -= outSpeed;
-                           xPos = x + length;
+                           if(xPos < x)
+                            {
+                                isOut = false;
+                                returning = false;
+                                length = 0;
+                                maxLength = 128;
+                                maxX = tileMap.GetMapWidth()*64;
+                                xPos = x;
+                            }
+                           else
+                           {
+                                maxX = xPos;
+                                returning = true;
+                                length -= outSpeed + 5;
+                                xPos = min(maxX, x + length);
+                           }
                        }
                 }
                 else
                 {
-                    returning = true;
-                    length -= outSpeed;
-                    xPos = x + length;
+                    if(xPos < x)
+                    {
+                        isOut = false;
+                        returning = false;
+                        length = 0;
+                        maxLength = 128;
+                        maxX = tileMap.GetMapWidth()*64;
+                        xPos = x;
+                    }
+                   else
+                   {
+                        maxX = xPos;
+                        returning = true;
+                        length -= outSpeed + 5;
+                        xPos = x + length;
+                   }
                 }
                 if(length <= 0)
                 {
                     isOut = false;
                     returning = false;
                     maxLength = 128;
+                    maxX = tileMap.GetMapWidth()*64;
                     xPos = x;
                 }
 
@@ -103,7 +129,6 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
             {
                 if(Input::getKey(Input::KEY_K))
                 {
-
                        if(! returning && length < maxLength
                           && !tileMap.GetTileCollision((xPos + 16 + outSpeed)/64, (yPos+8)/64))
                        {
@@ -112,22 +137,50 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
                        }
                        else
                        {
-                           returning = true;
-                           length -= outSpeed;
-                           xPos = x + length;
+                           if(xPos < x)
+                            {
+                                isOut = false;
+                                returning = false;
+                                length = 0;
+                                maxLength = 128;
+                                maxX = tileMap.GetMapWidth()*64;
+                                xPos = x;
+                            }
+                           else
+                           {
+                                maxX = xPos;
+                                returning = true;
+                                length -= outSpeed + 5;
+                                xPos = min(maxX, x + length);
+                           }
                        }
                 }
                 else
                 {
-                    returning = true;
-                    length -= outSpeed;
-                    xPos = x + length;
+                    if(xPos < x)
+                    {
+                        isOut = false;
+                        returning = false;
+                        length = 0;
+                        maxLength = 128;
+                        maxX = tileMap.GetMapWidth()*64;
+                        xPos = x;
+                    }
+                   else
+                   {
+                        maxX = xPos;
+                        returning = true;
+                        length -= outSpeed + 5;
+                        xPos = x + length;
+                   }
                 }
                 if(length <= 0)
                 {
                     isOut = false;
                     returning = false;
+                    length = 0;
                     maxLength = 128;
+                    maxX = tileMap.GetMapWidth()*64;
                     xPos = x;
                 }
             }
@@ -147,22 +200,31 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
                        }
                        else
                        {
+                           if(xPos > x)
+                            minX = 0;
+                           else
+                            minX = xPos;
                            returning = true;
                            length += outSpeed;
-                           xPos = x + length;
+                           xPos = max(minX, x + length);
                        }
                 }
                 else
                 {
+                    if(xPos > x)
+                        minX = 0;
+                    else
+                        minX = xPos;
                     returning = true;
                     length += outSpeed;
-                    xPos = x + length;
+                    xPos = max(minX, x + length);
                 }
                 if(length >= 0)
                 {
                     isOut = false;
                     returning = false;
                     maxLength = 128;
+                    minX = 0;
                     xPos = x;
                 }
             }
@@ -179,22 +241,49 @@ void Yoyo::Update(TileMap tileMap, float x, float y, int direction, double dt)
                        }
                        else
                        {
-                           returning = true;
-                           length += outSpeed;
-                           xPos = x + length;
+                           if(xPos > x)
+                            {
+                                isOut = false;
+                                returning = false;
+                                length = 0;
+                                maxLength = 128;
+                                minX = 0;
+                                xPos = x;
+                            }
+                           else
+                           {
+                                minX = xPos;
+                                returning = true;
+                                length += outSpeed + 5;
+                                xPos = max(minX, x + length);
+                           }
                        }
                 }
                 else
                 {
-                    returning = true;
-                    length += outSpeed;
-                    xPos = x + length;
+                    if(xPos > x)
+                    {
+                        isOut = false;
+                        returning = false;
+                        length = 0;
+                        maxLength = 128;
+                        minX = 0;
+                        xPos = x;
+                    }
+                   else
+                   {
+                        minX = xPos;
+                        returning = true;
+                        length += outSpeed + 5;
+                        xPos = max(minX, x + length);
+                   }
                 }
                 if(length >= 0)
                 {
                     isOut = false;
                     returning = false;
                     maxLength = 128;
+                    minX = 0;
                     xPos = x;
                 }
             }

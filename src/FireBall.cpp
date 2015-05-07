@@ -61,10 +61,11 @@ void FireBall::Update(TileMap tileMap, double dt, float playerXPos)
     xPos += xSpeed;
     yPos += ySpeed;
 
-    if(tileMap.GetTileCollision(xPos/Game::tileSize, yPos/Game::tileSize))
+    if(tileMap.GetTileInt(xPos/Game::tileSize, yPos/Game::tileSize) < 41
+       && tileMap.GetTileInt(xPos/Game::tileSize, yPos/Game::tileSize) != 0)
         remove = true;
 
-    if(xPos > (playerXPos + Game::windowWidth/2 + 80))
+    if(xPos > (playerXPos + Game::windowWidth))
         remove = true;
 
     anim.Update(dt);
@@ -113,7 +114,6 @@ void FireBall::render()
 
 FireBall::~FireBall()
 {
-    //dtor
 }
 
 void FireBall::SetupMesh(const char *filename)

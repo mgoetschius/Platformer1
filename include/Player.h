@@ -54,8 +54,10 @@ class Player
         Animation rightAnim;
         Animation leftAnim;
         void UpdateAnimation(Animation &anim, double dt);
-        //Yoyo yoyo;
+        Yoyo yoyo;
+        bool useYoYo;
         std::vector<FireBall*> fireBalls;
+        bool useFireBalls;
 };
 
 #endif // PLAYER_H

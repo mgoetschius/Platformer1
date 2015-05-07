@@ -94,5 +94,4 @@ void Key::SetupMesh(const char *filename, int size)
 
 Key::~Key()
 {
-    //dtor
 }

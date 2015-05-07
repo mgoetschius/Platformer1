@@ -1,8 +1,10 @@
 #include "PurpleEnemy.h"
 #include "Game.h"
+#include "TextureManager.h"
 
 PurpleEnemy::PurpleEnemy(Shader &shader, const char *filename, float x, float y)
 {
+    texture = TextureManager::LoadTexture(filename);
     SetupMesh(filename);
     xPos = x;
     yPos = y;

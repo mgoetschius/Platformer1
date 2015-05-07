@@ -115,5 +115,4 @@ void Door::SetupMesh(const char *filename, int size)
 
 Door::~Door()
 {
-    //dtor
 }

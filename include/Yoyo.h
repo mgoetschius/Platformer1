@@ -28,6 +28,7 @@ class Yoyo
         float xPos, yPos;
         float length, maxLength, minLength;
         float outSpeed;
+        float maxX, minX;
         bool isOut;
         bool returning;
         Animation anim;

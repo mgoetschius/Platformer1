@@ -74,5 +74,4 @@ void Mesh::render()
 
 Mesh::~Mesh()
 {
-    //dtor
 }
