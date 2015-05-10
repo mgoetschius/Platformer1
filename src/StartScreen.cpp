@@ -1,8 +1,8 @@
 #include "StartScreen.h"
 #include "Input.h"
 #include "JoyStick.h"
-#include <iostream>
 #include "TextureManager.h"
+#include <iostream>
 
 StartScreen::StartScreen()
 {
@@ -11,10 +11,15 @@ StartScreen::StartScreen()
 void StartScreen::Init(int levelNum)
 {
     shader.Setup("./res/shaders/vertexshader.vs", "./res/shaders/fragmentshader.fs");
-    texture = TextureManager::LoadTexture("./res/textures/startscreen.png");
+    texture = TextureManager::LoadTexture("./res/textures/backgroundlevel0.png");
 
     projUniform = glGetUniformLocation(shader.program, "projMatrix");
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
+
+    tileMap.Setup(shader, "0");
+    tileMap.SetHasKey(true);
+    tileMap.SetRenderDoor(false);
+
     translation = glm::vec3(0.0, 0.0, 0.0f);
     rotation = glm::vec3(0.0, 0.0, 1.0);
     scale = glm::vec3(Game::windowWidth,Game::windowHeight,1.0);
@@ -69,25 +74,23 @@ void StartScreen::Init(int levelNum)
 
 void StartScreen::Update(Game *game)
 {
-    if(JoyStick::isJoyStick)
+    if(JoyStick::isJoyStick || Input::getKey(Input::KEY_S))
     {
-        if(JoyStick::GetButtons(/*startbutton*/ 1))
-        {
             game->ChangeState(1);
-        }
     }
     else
     {
-        if(Input::getKey(Input::KEY_O))
-        {
-            game->ChangeState(1);
-        }
+        curTime = glfwGetTime();
+        delta = curTime - lastTime;
+        lastTime = curTime;
+        tileMap.Update(delta);
+
+        scale = glm::vec3(Game::windowWidth,Game::windowHeight,1.0);
+        transMatrix = glm::mat4();
+        transMatrix = glm::translate(transMatrix, translation);
+        transMatrix = glm::rotate(transMatrix, glm::radians(rotationAmount),  rotation);
+        transMatrix = glm::scale(transMatrix, scale);
     }
-    scale = glm::vec3(Game::windowWidth,Game::windowHeight,1.0);
-    transMatrix = glm::mat4();
-    transMatrix = glm::translate(transMatrix, translation);
-    transMatrix = glm::rotate(transMatrix, glm::radians(rotationAmount),  rotation);
-    transMatrix = glm::scale(transMatrix, scale);
 }
 
 void StartScreen::Render()
@@ -107,9 +110,19 @@ void StartScreen::Render()
     glBindVertexArray(0);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
+    int mapWidth = tileMap.GetMapWidth() * Game::tileSize;
+    int offsetX = Game::windowWidth / 2 - Game::tileSize;
+    offsetX = min(offsetX, 0);
+    offsetX = max(offsetX, (Game::windowWidth/2 - mapWidth/2));
+
+    int offsetY = Game::windowHeight - tileMap.GetMapHeight()*Game::tileSize;
+
+    projMatrix = glm::ortho(0.0f-offsetX, (float)Game::windowWidth-offsetX, (float)Game::windowHeight-offsetY, 0.0f-offsetY, -1.0f, 1.0f);
+    glUniformMatrix4fv(projUniform, 1, GL_FALSE, glm::value_ptr(projMatrix));
+    tileMap.Render();
 }
 
 StartScreen::~StartScreen()
 {
-    //dtor
+
 }

@@ -34,7 +34,7 @@ FireBall::FireBall(const Shader &shader, float x, float y, int direction)
 
 void FireBall::Setup(const Shader &shader, float x, float y)
 {
-    texture = TextureManager::LoadTexture("./res/textures/fireball.png");
+    //texture = TextureManager::LoadTexture("./res/textures/fireball.png");
     SetupMesh("./res/textures/fireball.png");
     xPos = x;
     yPos = y;

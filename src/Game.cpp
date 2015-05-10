@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "TextureManager.h"
+#include "glfw3.h"
 
 int Game::windowWidth = 720;
 int Game::windowHeight = 680;
@@ -15,7 +16,7 @@ void Game::Init()
 {
     std::cout << "Initializing Game\n";
     gameState = new Level1();
-    gameState->Init(1);
+    gameState->Init(2);
 }
 
 void Game::Update()

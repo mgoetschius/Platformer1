@@ -29,6 +29,8 @@ class StartScreen : public GameState
         float rotationAmount;
         Texture *texture;
         std::vector<std::vector<float>> texCoords;
+        TileMap tileMap;
+        double delta, curTime, lastTime;
 };
 
 #endif // STARTSCREEN_H

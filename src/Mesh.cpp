@@ -9,25 +9,23 @@ Mesh::Mesh()
 
 void Mesh::Setup(std::vector<Vertex> vert, std::vector<GLuint> ind, Texture *&tex)
 {
-    vertexArray.clear();
-    indices.clear();
-
-    vertexArray = vert;
-    indices = ind;
+    totalIndices = ind.size();
     texture = tex;
 
-    int arraySize = 5 * indices.size();
+    int arraySize = 5 * ind.size();
     GLfloat vertices[arraySize];
 
     int j = 0;
     for(int i = 0; i < arraySize; i+=5 )
     {
-        vertices[i] = vertexArray[j].GetPosition().x;
-        vertices[i+1] = vertexArray[j].GetPosition().y;
-        vertices[i+2] = vertexArray[j].GetPosition().z;
-        vertices[i+3] = vertexArray[j].GetTexCoord().x;
-        vertices[i+4] = vertexArray[j].GetTexCoord().y;
+        vertices[i] = vert[j].GetPosition().x;
+        vertices[i+1] = vert[j].GetPosition().y;
+        vertices[i+2] = vert[j].GetPosition().z;
+        vertices[i+3] = vert[j].GetTexCoord().x;
+        vertices[i+4] = vert[j].GetTexCoord().y;
         j++;
+        if(j > ind.size())
+        std::cout << "size: " << ind.size() << " j: " << j << std::endl;
     }
 
     glGenVertexArrays(1, &vao);
@@ -39,7 +37,7 @@ void Mesh::Setup(std::vector<Vertex> vert, std::vector<GLuint> ind, Texture *&te
 
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind.size() * sizeof(GLuint), &ind[0], GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -66,7 +64,7 @@ void Mesh::render()
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);

@@ -32,6 +32,7 @@ class TileMap
         bool GetDoorCollision(int x, int y);
         bool GetLadderCollision(int x, int y);
         void UpdateDoor() {door.update();};
+        void SetRenderDoor(bool val) {renderDoor = val;};
         std::vector<Enemy*>* GetEnemies() {return &enemies;};
     protected:
     private:
@@ -58,6 +59,7 @@ class TileMap
 
         Key key;
         bool hasKey = false;
+        bool renderDoor = true;
         Door door;
 
 };

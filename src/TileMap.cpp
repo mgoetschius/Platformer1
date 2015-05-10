@@ -19,6 +19,7 @@ void TileMap::Setup(Shader &shader, string levelNum)
     s = "./res/maps/level" + levelNum + ".txt";
     LoadFromFile(s);
     BuildVertices(shader);
+    std::cout << "Vert size: " << vertices[0].GetPosition().x << std::endl;
     mesh.Setup(vertices, indices, texture);
 
     transUniform = glGetUniformLocation(shader.program, "transMatrix");
@@ -58,7 +59,8 @@ void TileMap::Render()
 {
     if(!hasKey)
         key.render();
-    door.render();
+    if(renderDoor)
+        door.render();
     glUniformMatrix4fv(transUniform, 1, GL_FALSE, glm::value_ptr(transMatrix));
     mesh.render();
     for(int i = 0; i < enemies.size(); i++)
@@ -194,10 +196,10 @@ void TileMap::BuildVertices(Shader &shader)
                && tileInts[y][x] <= 56)
                || tileInts[y][x] == 64)
             {
-                Vertex v1(glm::vec3(x * Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][0], texCoords[atoi(tileIndices[y][x].c_str()) - 1][1]));
-                Vertex v2(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][2], texCoords[atoi(tileIndices[y][x].c_str()) - 1][3]));
-                Vertex v3(glm::vec3(x * Game::tileSize + Game::tileSize, y * Game::tileSize + Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][4], texCoords[atoi(tileIndices[y][x].c_str()) - 1][5]));
-                Vertex v4(glm::vec3(x * Game::tileSize, y * Game::tileSize + Game::tileSize, 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][6], texCoords[atoi(tileIndices[y][x].c_str()) - 1][7]));
+                Vertex v1(glm::vec3((float)(x * Game::tileSize), (float)(y * Game::tileSize), 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][0], texCoords[atoi(tileIndices[y][x].c_str()) - 1][1]));
+                Vertex v2(glm::vec3((float)(x * Game::tileSize + Game::tileSize), (float)(y * Game::tileSize), 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][2], texCoords[atoi(tileIndices[y][x].c_str()) - 1][3]));
+                Vertex v3(glm::vec3((float)(x * Game::tileSize + Game::tileSize), (float)(y * Game::tileSize + Game::tileSize), 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][4], texCoords[atoi(tileIndices[y][x].c_str()) - 1][5]));
+                Vertex v4(glm::vec3((float)(x * Game::tileSize), (float)(y * Game::tileSize + Game::tileSize), 0.0f), glm::vec2(texCoords[atoi(tileIndices[y][x].c_str()) - 1][6], texCoords[atoi(tileIndices[y][x].c_str()) - 1][7]));
                 vertices.push_back(v1);
                 vertices.push_back(v2);
                 vertices.push_back(v3);

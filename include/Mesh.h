@@ -19,10 +19,8 @@ class Mesh
     protected:
     private:
         GLuint vao, vbo, ibo;
-        int indicesCount;
-        std::vector<Vertex> vertexArray;
-        std::vector<GLuint> indices;
         Texture *texture;
+        int totalIndices;
 };
 
 #endif // MESH_H
